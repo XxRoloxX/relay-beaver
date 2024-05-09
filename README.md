@@ -77,8 +77,8 @@ w tym przypadku jest to Google.
 
 ![Diagram UML](./assets/uml-diagram.png)
 
-
-
+## Architektura aplikacji
+Aplikacja powstanie w architekturze komunikujących się asynchronicznie przy pomocy protokołu HTTP mikroserwisów. Części backendowe będą się porozumiewiać między sobą oraz z częścią frontendową przy pomocy API.
 
 ## Stos technologiczny
 Aplikacja dzieli się na frontend, backend, bazę danych oraz infrastrukturę.
