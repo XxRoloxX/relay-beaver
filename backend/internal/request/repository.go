@@ -26,7 +26,24 @@ func (repo RequestMongoRepository) FindById(id UUID.UUID) (models.Request, error
 }
 
 func (repo RequestMongoRepository) FindAll() ([]models.Request, error) {
-	return []models.Request{}, nil
+	mockRequest := models.Request{
+		Id:     UUID.New(),
+		Source: "source",
+		Destination: models.Address{
+			Host: "host",
+			Port: 8080,
+		},
+		StartTimestamp:  0,
+		FinishTimestamp: 0,
+		Headers: map[string]string{
+			"header": "exampleHeader",
+		},
+		Body:         "body",
+		Method:       "GET",
+		ResponseCode: 200,
+	}
+
+	return []models.Request{mockRequest}, nil
 }
 
 func (repo RequestMongoRepository) Update(request models.Request) error {
