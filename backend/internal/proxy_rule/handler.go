@@ -40,7 +40,33 @@ func (h *ProxyRuleHandler) CreateProxyRuleHandler(w http.ResponseWriter, r *http
 		return
 	}
 
-	err = h.Service.Create(proxyrule)
+	proxy, err := h.Service.Create(proxyrule)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		io.WriteString(w, err.Error())
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	encoder.Encode(proxy)
+}
+
+func (h *ProxyRuleHandler) UpdateProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
+
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+	var proxyrule models.ProxyRule
+
+	err := decoder.Decode(&proxyrule)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, err.Error())
+		return
+	}
+
+	// err = h.Service.Update(proxyrule)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
