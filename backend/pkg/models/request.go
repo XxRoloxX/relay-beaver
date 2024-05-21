@@ -17,11 +17,6 @@ type Request struct {
 }
 
 type Address struct {
-	Host string
-	Port int
-}
-
-type LoadBalancer struct {
-	name   string
-	params map[string]string
+	Host string `json:"host" bson:"host"`
+	Port int    `json:"port" bson:"port"`
 }

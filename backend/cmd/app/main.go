@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/internal/database"
+	"backend/internal/proxy_rule"
 	"backend/internal/request"
 	"fmt"
 	"net/http"
@@ -24,8 +25,14 @@ func main() {
 	requestService := request.RequestService{Repo: requestRepository}
 	requestHandler := request.RequestHandler{Service: requestService}
 
+	proxyRuleRepository := proxyrule.ProxyRuleMongoRepository{Db: *database}
+	proxyRuleService := proxyrule.ProxyRuleService{Repo: proxyRuleRepository}
+	proxyRuleHandler := proxyrule.ProxyRuleHandler{Service: proxyRuleService}
+
 	router.HandleFunc("/", handler).Methods("GET")
 	router.HandleFunc("/requests", requestHandler.GetRequestsHandler).Methods("GET")
+	router.HandleFunc("/proxy-rules", proxyRuleHandler.CreateProxyRuleHandler).Methods("POST")
+	router.HandleFunc("/proxy-rules", proxyRuleHandler.GetProxyRuleHandler).Methods("GET")
 
 	http.ListenAndServe(":8080", router)
 }
