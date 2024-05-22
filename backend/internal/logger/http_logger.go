@@ -21,7 +21,11 @@ func (logger HttpLogger) Request(request *http.Request) RequestLogger {
 }
 
 func (logger RequestLogger) formatMessage(message string) string {
-	return fmt.Sprintf("Request %s %s | %s", logger.Request.Method, logger.Request.URL.Path, message)
+	return fmt.Sprintf("Request %s %s %s %s",
+		logger.Request.Method,
+		logger.Request.URL.Path,
+		logger.Request.RemoteAddr,
+		message)
 }
 
 func (logger RequestLogger) Info(message string) {

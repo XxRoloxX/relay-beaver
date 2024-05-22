@@ -19,6 +19,7 @@ type RequestRepository interface {
 	Update(id string, request models.Request) error
 	Delete(id string) error
 }
+
 type RequestMongoRepository struct {
 	Db mongo.Database
 }

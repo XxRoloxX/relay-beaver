@@ -1,8 +1,7 @@
-package proxyevents
+package proxyevent
 
 import (
 	connectionpool "backend/pkg/connection_pool"
-
 	"github.com/gorilla/mux"
 )
 

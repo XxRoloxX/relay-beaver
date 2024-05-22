@@ -2,8 +2,9 @@ package main
 
 import (
 	"backend/internal/auth"
-	"backend/internal/client_events"
-	"backend/internal/proxy_events"
+	"backend/internal/client_event"
+	"backend/internal/logger"
+	"backend/internal/proxy_event"
 	"backend/internal/proxy_rule"
 	"backend/pkg/connection_pool"
 	"github.com/gorilla/mux"
@@ -19,15 +20,17 @@ func main() {
 	go connectionHub.Run()
 
 	authMiddleware := auth.NewAuthMiddleware()
+	loggerMiddleware := logger.NewLoggerMiddleware()
+	router.Use(loggerMiddleware.Handler)
 
 	_ = auth.GetAuthRouter(router.PathPrefix("/auth").Subrouter())
 
 	proxyRuleRouter := proxyrule.GetProxyRuleRouter(router.PathPrefix("/proxy-rules").Subrouter())
 	proxyRuleRouter.Use(authMiddleware.Handler)
 
-	_ = proxyevents.GetProxyEventsRouter(connectionHub, router.PathPrefix("/ws").Subrouter())
+	_ = proxyevent.GetProxyEventsRouter(connectionHub, router.PathPrefix("/ws").Subrouter())
 
-	_ = clientevents.GetClientEventsRouter(connectionHub, router.PathPrefix("/client-events").Subrouter())
+	_ = clientevent.GetClientEventsRouter(connectionHub, router.PathPrefix("/client-events").Subrouter())
 
 	http.ListenAndServe(":8080", router)
 }

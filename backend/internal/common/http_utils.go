@@ -1,9 +1,8 @@
 package common
 
 import (
-	"net/http"
-
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 func GetRouteParameter(r *http.Request, parameter string) string {

@@ -1,4 +1,4 @@
-package clientevents
+package clientevent
 
 import (
 	connectionpool "backend/pkg/connection_pool"

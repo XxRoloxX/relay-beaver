@@ -1,4 +1,4 @@
-package proxyevents
+package proxyevent
 
 import (
 	"backend/internal/database"

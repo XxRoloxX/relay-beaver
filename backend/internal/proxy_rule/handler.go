@@ -26,9 +26,7 @@ func NewProxyRuleHandler() ProxyRuleHandler {
 }
 
 func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
-
 	logger := h.Logger.Request(r)
-	logger.LogRequest()
 
 	requests, error := h.Service.Repo.FindAll()
 
@@ -44,9 +42,7 @@ func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Re
 }
 
 func (h *ProxyRuleHandler) CreateProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
-
 	logger := h.Logger.Request(r)
-	logger.LogRequest()
 
 	decoder := json.NewDecoder(r.Body)
 	encoder := json.NewEncoder(w)
@@ -75,9 +71,7 @@ func (h *ProxyRuleHandler) CreateProxyRuleHandler(w http.ResponseWriter, r *http
 }
 
 func (h *ProxyRuleHandler) UpdateProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
-
 	logger := h.Logger.Request(r)
-	logger.LogRequest()
 
 	decoder := json.NewDecoder(r.Body)
 	encoder := json.NewEncoder(w)
@@ -108,7 +102,6 @@ func (h *ProxyRuleHandler) UpdateProxyRuleHandler(w http.ResponseWriter, r *http
 
 func (h *ProxyRuleHandler) DeleteProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
 	logger := h.Logger.Request(r)
-	logger.LogRequest()
 
 	ruleId := common.GetRouteParameter(r, "id")
 

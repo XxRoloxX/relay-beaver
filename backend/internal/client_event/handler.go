@@ -1,4 +1,4 @@
-package clientevents
+package clientevent
 
 import (
 	"backend/pkg/connection_pool"
@@ -37,11 +37,10 @@ func (handler *ClientEventsHandler) HandleClientEvent(w http.ResponseWriter, r *
 	go client.ReadPump()
 	go client.WritePump()
 
-	for {
-		_, message, err := conn.ReadMessage()
-		if err != nil {
-		}
-		println(string(message))
-	}
+	// for {
+	// 	_, message, err := conn.ReadMessage()
+	// 	if err != nil {
+	// 	}
+	// 	println(string(message))
+	// }
 }
-
