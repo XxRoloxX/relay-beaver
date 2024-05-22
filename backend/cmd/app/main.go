@@ -33,6 +33,8 @@ func main() {
 	router.HandleFunc("/requests", requestHandler.GetRequestsHandler).Methods("GET")
 	router.HandleFunc("/proxy-rules", proxyRuleHandler.CreateProxyRuleHandler).Methods("POST")
 	router.HandleFunc("/proxy-rules", proxyRuleHandler.GetProxyRuleHandler).Methods("GET")
+	router.HandleFunc("/proxy-rules/{id}", proxyRuleHandler.UpdateProxyRuleHandler).Methods("PUT")
+	router.HandleFunc("/proxy-rules/{id}", proxyRuleHandler.DeleteProxyRuleHandler).Methods("DELETE")
 
 	http.ListenAndServe(":8080", router)
 }
