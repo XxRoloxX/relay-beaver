@@ -9,5 +9,5 @@ type RequestService struct {
 }
 
 func (service RequestService) Store(request models.Request) error {
-	return service.Repo.Store(request)
+	return service.Repo.Create(request)
 }

@@ -2,9 +2,11 @@ package database
 
 import (
 	"context"
+	"os"
+
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"os"
 )
 
 func CreateDatabaseURI() string {
@@ -19,6 +21,7 @@ func CreateDatabaseURI() string {
 
 func InitializeDatabase() *mongo.Database {
 
+	godotenv.Load()
 	database_uri := CreateDatabaseURI()
 	println(database_uri)
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(database_uri))
@@ -32,3 +35,5 @@ func InitializeDatabase() *mongo.Database {
 	return db
 
 }
+
+var Db = InitializeDatabase()

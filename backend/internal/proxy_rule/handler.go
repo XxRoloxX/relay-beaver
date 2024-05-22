@@ -19,7 +19,7 @@ func NewProxyRuleHandler() ProxyRuleHandler {
 	return ProxyRuleHandler{
 		Service: ProxyRuleService{
 			Repo: ProxyRuleMongoRepository{
-				Db: *database.InitializeDatabase(),
+				Db: *database.Db,
 			}},
 		Logger: logger.HttpLogger{},
 	}

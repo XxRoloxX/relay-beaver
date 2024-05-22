@@ -1,11 +1,7 @@
 package models
 
-import (
-	UUID "github.com/google/uuid"
-)
-
 type Request struct {
-	Id              UUID.UUID
+	Id              string `bson:"_id,omitempty" json:"id,omitempty"`
 	Source          string
 	Destination     Address
 	StartTimestamp  int64
