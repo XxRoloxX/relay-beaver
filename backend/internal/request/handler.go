@@ -1,8 +1,10 @@
 package request
 
 import (
+	"backend/pkg/models"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -24,6 +26,29 @@ func (h *RequestHandler) GetRequestsHandler(w http.ResponseWriter, r *http.Reque
 	w.Write(serialized)
 }
 
-func PostRequestHandler(w http.ResponseWriter, r *http.Request) {
+func (h *RequestHandler) PostRequestHandler(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	encoder := json.NewEncoder(w)
+	var request models.Request
 
+	err := decoder.Decode(&request)
+
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		io.WriteString(w, err.Error())
+		return
+	}
+
+	newRequest, err := h.Service.CreateRequest(request)
+
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		io.WriteString(w, err.Error())
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	encoder.Encode(newRequest)
 }

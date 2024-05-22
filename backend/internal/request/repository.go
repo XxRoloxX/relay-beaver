@@ -13,7 +13,7 @@ const (
 )
 
 type RequestRepository interface {
-	Create(request models.Request) error
+	Create(request models.Request) (models.Request, error)
 	FindById(id string) (models.Request, error)
 	FindAll() ([]models.Request, error)
 	Update(id string, request models.Request) error
@@ -28,10 +28,16 @@ func (repo RequestMongoRepository) getRequestsCollection() *mongo.Collection {
 	return repo.Db.Collection(RequestCollection)
 }
 
-func (repo RequestMongoRepository) Create(request models.Request) error {
-	_, error := repo.getRequestsCollection().InsertOne(context.TODO(), request)
+func (repo RequestMongoRepository) Create(request models.Request) (models.Request, error) {
+	res, error := repo.getRequestsCollection().InsertOne(context.TODO(), request)
 
-	return error
+	if error != nil {
+		return models.Request{}, error
+	}
+
+	request.Id = res.InsertedID.(primitive.ObjectID).Hex()
+
+	return request, nil
 }
 
 func (repo RequestMongoRepository) FindById(id string) (models.Request, error) {

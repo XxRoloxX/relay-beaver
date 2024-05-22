@@ -8,7 +8,7 @@ type RequestService struct {
 	Repo RequestRepository
 }
 
-func (service RequestService) CreateRequest(request models.Request) error {
+func (service RequestService) CreateRequest(request models.Request) (models.Request, error) {
 	return service.Repo.Create(request)
 }
 func (service RequestService) FindById(id string) (models.Request, error) {

@@ -44,7 +44,7 @@ func (handler *ProxyEventsHandler) WebsocketRequestsHandler(w http.ResponseWrite
 	conn, err := upgrader.Upgrade(w, r, nil)
 	logger := handler.Logger.Request(r)
 	if err != nil {
-		println(err.Error())
+		logger.Error(err.Error())
 		return
 	}
 
@@ -67,6 +67,5 @@ func (handler *ProxyEventsHandler) WebsocketRequestsHandler(w http.ResponseWrite
 
 		handler.Service.HandleProxiedRequest(eventMessage)
 		handler.ConnectionHub.Broadcast(message)
-		logger.Info("Received message: " + eventMessage.Type)
 	}
 }

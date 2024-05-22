@@ -8,6 +8,6 @@ type ProxyEventsService struct {
 
 func (service ProxyEventsService) HandleProxiedRequest(message EventMessage) error {
 	proxiedRequest := message.ProxiedRequest
-	err := service.Repo.Create(proxiedRequest)
+	_, err := service.Repo.Create(proxiedRequest)
 	return err
 }
