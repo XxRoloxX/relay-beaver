@@ -1,10 +1,11 @@
 package proxyrule
 
 import (
+	"backend/internal/common"
+	"backend/internal/database"
 	"backend/internal/logger"
 	"backend/pkg/models"
 	"encoding/json"
-	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 )
@@ -12,6 +13,16 @@ import (
 type ProxyRuleHandler struct {
 	Service ProxyRuleService
 	Logger  logger.HttpLogger
+}
+
+func NewProxyRuleHandler() ProxyRuleHandler {
+	return ProxyRuleHandler{
+		Service: ProxyRuleService{
+			Repo: ProxyRuleMongoRepository{
+				Db: *database.InitializeDatabase(),
+			}},
+		Logger: logger.HttpLogger{},
+	}
 }
 
 func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
@@ -72,8 +83,8 @@ func (h *ProxyRuleHandler) UpdateProxyRuleHandler(w http.ResponseWriter, r *http
 	encoder := json.NewEncoder(w)
 
 	var proxyrule models.ProxyRule
-	routeVars := mux.Vars(r)
 	err := decoder.Decode(&proxyrule)
+	ruleId := common.GetRouteParameter(r, "id")
 
 	if err != nil {
 		logger.Warn("Error decoding request body")
@@ -82,7 +93,7 @@ func (h *ProxyRuleHandler) UpdateProxyRuleHandler(w http.ResponseWriter, r *http
 		return
 	}
 
-	updatedProxyRule, err := h.Service.UpdateRule(routeVars["id"], proxyrule)
+	updatedProxyRule, err := h.Service.UpdateRule(ruleId, proxyrule)
 
 	if err != nil {
 		logger.Error(err.Error())
@@ -99,8 +110,7 @@ func (h *ProxyRuleHandler) DeleteProxyRuleHandler(w http.ResponseWriter, r *http
 	logger := h.Logger.Request(r)
 	logger.LogRequest()
 
-	routeVars := mux.Vars(r)
-	ruleId := routeVars["id"]
+	ruleId := common.GetRouteParameter(r, "id")
 
 	if !h.Service.isRulePresent(ruleId) {
 		logger.Warn("Rule not found")
@@ -108,7 +118,7 @@ func (h *ProxyRuleHandler) DeleteProxyRuleHandler(w http.ResponseWriter, r *http
 		return
 	}
 
-	err := h.Service.DeleteRule(routeVars["id"])
+	err := h.Service.DeleteRule(ruleId)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
