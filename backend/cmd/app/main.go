@@ -5,10 +5,10 @@ import (
 	"backend/internal/proxy_rule"
 	"backend/internal/request"
 	"fmt"
-	"net/http"
-
+	// "net/http"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"net/http"
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {

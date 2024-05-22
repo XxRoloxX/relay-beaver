@@ -15,7 +15,7 @@ type ProxyRuleRepository interface {
 	Create(proxyRule models.ProxyRule) (models.ProxyRule, error)
 	FindById(id string) (models.ProxyRule, error)
 	FindAll() ([]models.ProxyRule, error)
-	Update(proxyRule models.ProxyRule) error
+	Update(proxyRule models.ProxyRule) (models.ProxyRule, error)
 	Delete(id string) error
 }
 
@@ -56,8 +56,17 @@ func (r ProxyRuleMongoRepository) FindAll() ([]models.ProxyRule, error) {
 	return proxyRuleEntries, nil
 }
 
-func (r ProxyRuleMongoRepository) Update(proxyRuleEntry models.ProxyRule) error {
-	return nil
+func (r ProxyRuleMongoRepository) Update(id string, proxyRuleEntry models.ProxyRule) (models.ProxyRule, error) {
+	modifiedEntry := r.Db.Collection("proxy_rules").FindOneAndUpdate(context.TODO(), id, proxyRuleEntry)
+
+	if modifiedEntry.Err() != nil {
+		return models.ProxyRule{}, modifiedEntry.Err()
+	}
+	var updatedEntry models.ProxyRule
+
+	modifiedEntry.Decode(&updatedEntry)
+
+	return updatedEntry, nil
 }
 
 func (r ProxyRuleMongoRepository) Delete(id string) error {
