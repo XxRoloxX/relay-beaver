@@ -2,9 +2,8 @@ package logger
 
 import (
 	"fmt"
-	"net/http"
-
 	"github.com/rs/zerolog/log"
+	"net/http"
 )
 
 type HttpLogger struct {
