@@ -10,7 +10,7 @@ const getCodeFromParams = () => {
 
 const useLogin = () => {
   const [code] = useState(getCodeFromParams());
-  const { authenticationInfo, setAuthenticationInfo } = useAuth();
+  const { authenticationInfo, setAuthenticationInfo, isTokenValid } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,13 +18,17 @@ const useLogin = () => {
       login(code)
         .then((authenticationInfo) => {
           setAuthenticationInfo(authenticationInfo);
-          navigate("/auth/traffic");
+          navigate("/traffic");
         })
         .catch((error) => {
           console.error("Failed to login", error);
         });
     }
-  }, [code, setAuthenticationInfo, navigate]);
+
+    if (isTokenValid()) {
+      navigate("/traffic");
+    }
+  }, [code, setAuthenticationInfo, navigate, isTokenValid]);
 
   return authenticationInfo;
 };

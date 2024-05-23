@@ -5,17 +5,15 @@ import Navbar from "../../components/Navbar/Navbar";
 import "./ProtectedLayout.scss";
 
 export const ProtectedLayout = () => {
-  const {
-    authenticationInfo: { expires },
-  } = useAuth();
+  const { isTokenValid } = useAuth();
   const outlet = useOutlet();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!expires || expires < Date.now() / 1000) {
+    if (!isTokenValid()) {
       navigate("/");
     }
-  }, [expires, navigate]);
+  }, [isTokenValid, navigate]);
 
   return (
     <div className="protected-layout">
