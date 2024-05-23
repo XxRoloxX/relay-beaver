@@ -1,0 +1,15 @@
+@import "@/variables.scss";
+
+.login {
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  grid-template-columns: 4fr 5fr;
+  display: grid;
+  width: 100vw;
+  background-color: $primary;
+
+  @media (max-width: $md) {
+    grid-template-columns: 1fr;
+  }
+}
