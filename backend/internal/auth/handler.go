@@ -20,32 +20,13 @@ func NewAuthHandler() AuthHandler {
 	}
 }
 
-func (handler AuthHandler) AuthCodeHandler(w http.ResponseWriter, request *http.Request) {
-	logger := handler.logger.Request(request)
-	logger.LogRequest()
-
-	io.WriteString(w, handler.AuthService.GetAuthUrl(""))
-}
-
-func SetAuthCookies(w *http.ResponseWriter, response dto.LoginResponseDto) {
-	http.SetCookie(*w, &http.Cookie{
-		Name:  "id_token",
-		Value: response.IdToken,
-		Path:  "/",
-	})
-
-	http.SetCookie(*w, &http.Cookie{
-		Name:  "access_token",
-		Value: response.AccessToken,
-		Path:  "/",
-	})
-
-	http.SetCookie(*w, &http.Cookie{
-		Name:  "refresh_token",
-		Value: response.RefreshToken,
-		Path:  "/",
-	})
-}
+//
+// func (handler AuthHandler) AuthCodeHandler(w http.ResponseWriter, request *http.Request) {
+// 	logger := handler.logger.Request(request)
+// 	logger.LogRequest()
+//
+// 	io.WriteString(w, handler.AuthService.GetAuthUrl(""))
+// }
 
 func (handler AuthHandler) LoginHandler(w http.ResponseWriter, request *http.Request) {
 	logger := handler.logger.Request(request)
@@ -74,29 +55,64 @@ func (handler AuthHandler) LoginHandler(w http.ResponseWriter, request *http.Req
 	SetAuthCookies(&w, response)
 }
 
-func (handler AuthHandler) ValidateTokenHandler(w http.ResponseWriter, request *http.Request) {
+func (handler AuthHandler) TokenInfoHandler(w http.ResponseWriter, request *http.Request) {
 	logger := handler.logger.Request(request)
-	logger.LogRequest()
 
-	var token dto.LoginResponseDto
-
-	err := json.NewDecoder(request.Body).Decode(&token)
-
+	idToken, err := GetIdTokenFromCookie(request)
 	if err != nil {
+		logger.Error("Error getting id_token cookie")
 		logger.Error(err.Error())
-		w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, "Invalid request")
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	err = handler.AuthService.ValidateToken(token.IdToken)
+	err = handler.AuthService.ValidateToken(idToken)
+	if err != nil {
+		logger.Error("Invalid Token")
+		logger.Error(err.Error())
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 
+	tokenInfo, err := handler.AuthService.GetTokenInfo(idToken)
 	if err != nil {
 		logger.Error(err.Error())
 		w.WriteHeader(http.StatusUnauthorized)
-		io.WriteString(w, "Error validating token")
+		io.WriteString(w, "Error getting token info")
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(tokenInfo)
+	if err != nil {
+		logger.Error(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+}
+
+func SetAuthCookies(w *http.ResponseWriter, response dto.LoginResponseDto) {
+	http.SetCookie(*w, &http.Cookie{
+		Name:     "id_token",
+		Value:    response.IdToken,
+		Path:     "/",
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
+	})
+
+	http.SetCookie(*w, &http.Cookie{
+		Name:     "access_token",
+		Value:    response.AccessToken,
+		Path:     "/",
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
+	})
+
+	http.SetCookie(*w, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    response.RefreshToken,
+		Path:     "/",
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
+	})
 }

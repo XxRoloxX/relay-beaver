@@ -7,6 +7,7 @@ import (
 	"backend/internal/proxy_event"
 	"backend/internal/proxy_rule"
 	"backend/pkg/connection_pool"
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"net/http"
@@ -32,5 +33,12 @@ func main() {
 
 	_ = clientevent.GetClientEventsRouter(connectionHub, router.PathPrefix("/client-events").Subrouter())
 
-	http.ListenAndServe(":8080", router)
+	origins := handlers.AllowedOrigins([]string{"http://localhost:5173"})
+	headers := handlers.AllowedHeaders([]string{
+		"X-Requested-With",
+		"Content-Type",
+		"Authorization",
+	})
+
+	http.ListenAndServe(":8080", handlers.CORS(origins, headers, handlers.AllowCredentials())(router))
 }
