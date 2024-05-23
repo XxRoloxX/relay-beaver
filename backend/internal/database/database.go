@@ -16,7 +16,7 @@ func CreateDatabaseURI() string {
 	port := os.Getenv("MONGO_PORT")
 	database := os.Getenv("MONGO_DATABASE")
 
-	return "mongodb://" + user + ":" + password + "@" + host + ":" + port + "/" + database
+	return fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", user, password, host, port, database)
 }
 
 func InitializeDatabase() *mongo.Database {
