@@ -1,0 +1,49 @@
+@import "@/variables.scss";
+
+.table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border: 1px solid $tertiary;
+  width: 90%;
+  background-color: $quaternary;
+  border-collapse: separate;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  overflow-y: scroll;
+
+  &__header {
+    text-align: left;
+  }
+
+  th {
+    font-size: 1rem;
+    padding: 0.7rem;
+    border-style: solid;
+    border-color: $accent-light;
+    border-width: 1px;
+    padding-left: 1rem;
+  }
+
+  tbody {
+    // height: 1000px;
+    max-height: 1000px;
+    overflow-y: scroll;
+  }
+
+  th:first-child {
+    border-top-left-radius: 10px;
+  }
+
+  th:last-child {
+    border-top-right-radius: 10px;
+  }
+
+  td {
+    font-size: 1rem;
+    padding: 0.7rem;
+    border-style: solid;
+    border-color: $tertiary;
+    border-width: 1px;
+    padding-left: 1rem;
+  }
+}

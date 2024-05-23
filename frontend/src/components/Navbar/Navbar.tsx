@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import "./Navbar.scss";
 
 const NAVBAR_LINKS = [
-  { to: "live", label: "Live" },
+  { to: "config", label: "Config" },
   { to: "traffic", label: "Traffic" },
   { to: "stats", label: "Stats" },
 ];

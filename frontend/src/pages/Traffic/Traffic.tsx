@@ -1,10 +1,13 @@
 import useTraffic from "../../hooks/useTraffic";
+import TrafficTable from "./components/TrafficTable";
+import "./Traffic.scss";
 
 const Traffic = () => {
-  const traffic = useTraffic();
+  useTraffic();
   return (
-    <div className="protected-route">
-      <h1>Current traffic</h1>
+    <div className="traffic-page">
+      <h1 className="traffic-page__title">Current traffic</h1>
+      <TrafficTable />
     </div>
   );
 };

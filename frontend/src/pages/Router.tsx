@@ -9,6 +9,8 @@ import { ProtectedLayout } from "../providers/AuthProvider/ProtectedLayout";
 import Traffic from "./Traffic/Traffic";
 import { AuthLayout } from "../providers/AuthProvider/AuthLayout";
 import { getTokenInfo } from "../api/proxyApi";
+import Stats from "./Stats/Stats";
+import Config from "./Config/Config";
 
 const getUserData = () => {
   return getTokenInfo();
@@ -19,16 +21,17 @@ const router = createBrowserRouter(
     <Route
       element={<AuthLayout />}
       loader={() => {
-        const userDataPromise = getUserData();
         return defer({
-          userData: userDataPromise,
+          userData: getUserData(),
         });
       }}
+      errorElement={<Login />}
     >
       <Route path="/" element={<Login />} />
       <Route path="/" element={<ProtectedLayout />}>
         <Route path="traffic" element={<Traffic />} />
-        <Route path="weather" element={<div>WeatherPage</div>} />
+        <Route path="stats" element={<Stats />} />
+        <Route path="config" element={<Config />} />
       </Route>
     </Route>,
   ),
