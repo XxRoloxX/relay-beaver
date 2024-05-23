@@ -6,7 +6,6 @@ import (
 	"backend/internal/logger"
 	"backend/pkg/models"
 	"encoding/json"
-	"io"
 	"net/http"
 )
 
@@ -31,11 +30,16 @@ func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Re
 	requests, error := h.Service.Repo.FindAll()
 
 	if error != nil {
-		logger.Error(error.Error())
-		w.WriteHeader(http.StatusInternalServerError)
+		common.LogBadRequestError(w, logger, error)
+		return
 	}
 
 	serialized, error := json.Marshal(requests)
+
+	if error != nil {
+		common.LogInternalServerError(w, logger, error)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(serialized)
@@ -43,31 +47,23 @@ func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Re
 
 func (h *ProxyRuleHandler) CreateProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
 	logger := h.Logger.Request(r)
-
-	decoder := json.NewDecoder(r.Body)
-	encoder := json.NewEncoder(w)
 	var proxyrule models.ProxyRule
-
-	err := decoder.Decode(&proxyrule)
+	err := json.NewDecoder(r.Body).Decode(&proxyrule)
 
 	if err != nil {
-		logger.Warn(err.Error())
-		w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, err.Error())
+		common.LogBadRequestError(w, logger, err)
 		return
 	}
 
 	proxy, err := h.Service.CreateRule(proxyrule)
 
 	if err != nil {
-		logger.Error(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		io.WriteString(w, err.Error())
+		common.LogInternalServerError(w, logger, err)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	encoder.Encode(proxy)
+	json.NewEncoder(w).Encode(proxy)
 }
 
 func (h *ProxyRuleHandler) UpdateProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
@@ -81,18 +77,14 @@ func (h *ProxyRuleHandler) UpdateProxyRuleHandler(w http.ResponseWriter, r *http
 	ruleId := common.GetRouteParameter(r, "id")
 
 	if err != nil {
-		logger.Warn("Error decoding request body")
-		w.WriteHeader(http.StatusBadRequest)
-		io.WriteString(w, err.Error())
+		common.LogBadRequestError(w, logger, err)
 		return
 	}
 
 	updatedProxyRule, err := h.Service.UpdateRule(ruleId, proxyrule)
 
 	if err != nil {
-		logger.Error(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		io.WriteString(w, err.Error())
+		common.LogInternalServerError(w, logger, err)
 		return
 	}
 
@@ -114,8 +106,8 @@ func (h *ProxyRuleHandler) DeleteProxyRuleHandler(w http.ResponseWriter, r *http
 	err := h.Service.DeleteRule(ruleId)
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		io.WriteString(w, err.Error())
+		common.LogInternalServerError(w, logger, err)
+		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)

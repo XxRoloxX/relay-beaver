@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -15,7 +16,7 @@ func CreateDatabaseURI() string {
 	port := os.Getenv("MONGO_PORT")
 	database := os.Getenv("MONGO_DATABASE")
 
-	return "mongodb://" + user + ":" + password + "@" + host + ":" + port + "/" + database
+	return fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", user, password, host, port, database)
 }
 
 func InitializeDatabase() *mongo.Database {
@@ -23,11 +24,12 @@ func InitializeDatabase() *mongo.Database {
 	godotenv.Load()
 	database_uri := CreateDatabaseURI()
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(database_uri))
-	println("Connected to " + database_uri)
 
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("Error connecting to database: %v", err))
 	}
+
+	println(fmt.Sprintf("Connected to database: %v", database_uri))
 
 	db := client.Database("proxy")
 	return db
