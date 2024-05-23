@@ -19,6 +19,9 @@ func NewClientEventsHandler(connectionHub *connectionpool.Hub) *ClientEventsHand
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
 
 func (handler *ClientEventsHandler) HandleClientEvent(w http.ResponseWriter, r *http.Request) {
