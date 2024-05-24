@@ -20,14 +20,6 @@ func NewAuthHandler() AuthHandler {
 	}
 }
 
-//
-// func (handler AuthHandler) AuthCodeHandler(w http.ResponseWriter, request *http.Request) {
-// 	logger := handler.logger.Request(request)
-// 	logger.LogRequest()
-//
-// 	io.WriteString(w, handler.AuthService.GetAuthUrl(""))
-// }
-
 func (handler AuthHandler) LoginHandler(w http.ResponseWriter, request *http.Request) {
 	logger := handler.logger.Request(request)
 	logger.LogRequest()
