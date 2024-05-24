@@ -8,12 +8,6 @@ import (
 
 type AuthService struct{}
 
-// func (service AuthService) GetAuthUrl(authCode string) string {
-// 	googleClient := NewGoogleClientFromEnv()
-//
-// 	return googleClient.GetAuthUrl()
-// }
-
 func (service AuthService) Authenticate(code string) (dto.LoginResponseDto, error) {
 	googleClient := NewGoogleClientFromEnv()
 

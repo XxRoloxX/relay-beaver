@@ -51,14 +51,6 @@ func NewGoogleClientFromEnv() GoogleClient {
 	}
 }
 
-// func (client GoogleClient) GetAuthUrl() string {
-// 	return fmt.Sprintf("%s/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=%s&access_type=offline&approval_prompt=force",
-// 		GOOGLE_AUTH_URL,
-// 		client.ClientId,
-// 		client.RedirectUrl,
-// 		client.Scope)
-// }
-
 func (client GoogleClient) GetAccessTokenUrl(code string) string {
 	return fmt.Sprintf("%s/token?client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=authorization_code&code=%s",
 		GOOGLE_AUTH_URL,
