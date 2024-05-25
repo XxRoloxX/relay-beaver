@@ -48,21 +48,6 @@ func (p *SimpleRequestParser) populateHttpHeaders(content []string, request *Req
 	request.Headers = headers
 }
 
-//func ParseRequest(content string) {
-//	requestInfo := strings.Split(strings.Split(content, "\r\n\r\n")[0], "\r\n")
-//	request := Request{}
-//
-//	httpPart := requestInfo[0]
-//	populateHttpInfo(httpPart, &request)
-//
-//	headersPart := requestInfo[1:]
-//	populateHttpHeaders(headersPart, &request)
-//
-//	// TODO -> fix circular imports
-//	channel <- request
-//	//websocket.GetChannel() <- request
-//}
-
 func populateHttpInfo(content string, request *Request) {
 	info := strings.Split(content, " ")
 	request.Method = info[0]
