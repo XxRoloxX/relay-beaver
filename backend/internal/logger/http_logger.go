@@ -35,8 +35,8 @@ func (logger RequestLogger) LogRequest() {
 	log.Info().Msg(logger.formatMessage(""))
 }
 
-func (logger RequestLogger) Error(message string) {
-	log.Error().Msg(logger.formatMessage(message))
+func (logger RequestLogger) Error(errorMessage interface{}) {
+	log.Error().Msg(logger.formatMessage(fmt.Sprintf("%v", errorMessage)))
 }
 
 func (logger RequestLogger) Warn(message string) {

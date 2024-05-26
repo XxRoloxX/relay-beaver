@@ -1,0 +1,27 @@
+.navbar {
+  background-image: url("@/assets/login-banner.png");
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  padding: 0.4rem;
+  padding-right: 1rem;
+  justify-content: space-between;
+
+  &__link {
+    color: white;
+    font-size: 1.7rem;
+    font-weight: 300;
+    margin: 0 1rem;
+    transition: color 0.3s;
+
+    &:hover {
+      color: white;
+      font-weight: 400;
+    }
+
+    &--active {
+      color: white;
+      font-weight: 400;
+    }
+  }
+}

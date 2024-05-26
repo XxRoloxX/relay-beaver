@@ -2,11 +2,12 @@ package main
 
 import (
 	"backend/internal/auth"
-	"backend/internal/client_event"
+	clientevent "backend/internal/client_event"
+	"backend/internal/common"
 	"backend/internal/logger"
-	"backend/internal/proxy_event"
-	"backend/internal/proxy_rule"
-	"backend/pkg/connection_pool"
+	proxyevent "backend/internal/proxy_event"
+	proxyrule "backend/internal/proxy_rule"
+	connectionpool "backend/pkg/connection_pool"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	"net/http"
@@ -32,5 +33,5 @@ func main() {
 
 	_ = clientevent.GetClientEventsRouter(connectionHub, router.PathPrefix("/client-events").Subrouter())
 
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":8080", common.HandleCors(router))
 }

@@ -2,12 +2,15 @@ package auth
 
 import (
 	"backend/internal/auth/dto"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"time"
+
+	"google.golang.org/api/idtoken"
 )
 
 const GOOGLE_AUTH_URL = "https://accounts.google.com/o/oauth2"
@@ -48,14 +51,6 @@ func NewGoogleClientFromEnv() GoogleClient {
 	}
 }
 
-func (client GoogleClient) GetAuthUrl() string {
-	return fmt.Sprintf("%s/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=%s&access_type=offline&approval_prompt=force",
-		GOOGLE_AUTH_URL,
-		client.ClientId,
-		client.RedirectUrl,
-		client.Scope)
-}
-
 func (client GoogleClient) GetAccessTokenUrl(code string) string {
 	return fmt.Sprintf("%s/token?client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=authorization_code&code=%s",
 		GOOGLE_AUTH_URL,
@@ -63,6 +58,18 @@ func (client GoogleClient) GetAccessTokenUrl(code string) string {
 		client.ClientSecret,
 		client.RedirectUrl,
 		code)
+}
+
+func (client GoogleClient) GetTokenInfo(idToken string) (dto.TokenInfoDto, error) {
+	token, err := idtoken.Validate(context.Background(), idToken, os.Getenv("GOOGLE_CLIENT_ID"))
+	if err != nil {
+		return dto.TokenInfoDto{}, err
+	}
+
+	return dto.TokenInfoDto{
+		Email:   token.Claims["email"].(string),
+		Expires: token.Expires,
+	}, nil
 }
 
 func (client GoogleClient) Authenticate(code string) (dto.LoginResponseDto, error) {

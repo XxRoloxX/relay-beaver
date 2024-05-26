@@ -8,3 +8,8 @@ type LoginResponseDto struct {
 type LoginRequestDto struct {
 	Code string `json:"code"`
 }
+
+type TokenInfoDto struct {
+	Email   string `json:"email"`
+	Expires int64  `json:"expires"`
+}

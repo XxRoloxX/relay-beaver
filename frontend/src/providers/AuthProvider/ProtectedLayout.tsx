@@ -1,18 +1,24 @@
 import { useNavigate, useOutlet } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 import { useEffect } from "react";
+import Navbar from "../../components/Navbar/Navbar";
+import "./ProtectedLayout.scss";
 
 export const ProtectedLayout = () => {
-  const user = useAuth();
+  const { isTokenValid } = useAuth();
   const outlet = useOutlet();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      console.log("Redirecting to login page");
+    if (!isTokenValid()) {
       navigate("/");
     }
-  }, [user, navigate]);
+  }, [isTokenValid, navigate]);
 
-  return <>{outlet}</>;
+  return (
+    <div className="protected-layout">
+      <Navbar />
+      {outlet}
+    </div>
+  );
 };

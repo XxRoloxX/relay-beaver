@@ -2,23 +2,36 @@ import {
   Route,
   createBrowserRouter,
   createRoutesFromElements,
+  defer,
 } from "react-router-dom";
 import Login from "./Login/Login";
 import { ProtectedLayout } from "../providers/AuthProvider/ProtectedLayout";
 import Traffic from "./Traffic/Traffic";
 import { AuthLayout } from "../providers/AuthProvider/AuthLayout";
+import { getTokenInfo } from "../api/proxyApi";
+import Stats from "./Stats/Stats";
+import Config from "./Config/Config";
 
 const getUserData = () => {
-  return { user: window.localStorage.getItem("user") };
+  return getTokenInfo();
 };
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route element={<AuthLayout />} loader={() => getUserData()}>
+    <Route
+      element={<AuthLayout />}
+      loader={() => {
+        return defer({
+          userData: getUserData(),
+        });
+      }}
+      errorElement={<Login />}
+    >
       <Route path="/" element={<Login />} />
-      <Route path="/auth" element={<ProtectedLayout />}>
+      <Route path="/" element={<ProtectedLayout />}>
         <Route path="traffic" element={<Traffic />} />
-        <Route path="weather" element={<div>WeatherPage</div>} />
+        <Route path="stats" element={<Stats />} />
+        <Route path="config" element={<Config />} />
       </Route>
     </Route>,
   ),
