@@ -11,20 +11,11 @@ import (
 
 func RunProxy() {
 	channel := make(chan request.Request)
-	proxyPort, websocketPort := getPorts()
-	go startWebsocket(channel, websocketPort)
-	startProxy(channel, proxyPort)
-}
-
-func getPorts() (int, int) {
 	proxyPort := env.GetProxyServerPort()
-	wsPort := env.GetWebsocketServerPort()
+	websocketPort, host, endpoint := env.GetWebsocketClientPort(), env.GetWebsocketServerHost(), env.GetWebsocketServerEndpoint()
 
-	if proxyPort == wsPort {
-		panic("proxy and websocket ports cannot be the same")
-	}
-
-	return proxyPort, wsPort
+	go startWebsocketClient(channel, host, websocketPort, endpoint)
+	startProxy(channel, proxyPort)
 }
 
 func startProxy(channel chan request.Request, port int) {
@@ -40,9 +31,9 @@ func startProxy(channel chan request.Request, port int) {
 	}
 }
 
-func startWebsocket(channel chan request.Request, port int) {
-	ws := websocket.NewWebsocketServer(channel, port)
-	err := ws.Start()
+func startWebsocketClient(channel chan request.Request, host string, port int, endpoint string) {
+	ws := websocket.NewWebsocketServer(channel, host, port, endpoint)
+	err := ws.Connect()
 	if err != nil {
 		panic(err)
 	}

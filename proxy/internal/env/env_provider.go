@@ -11,8 +11,16 @@ func GetProxyServerPort() int {
 	return getPortOrReturnDefault("PROXY_SERVER_PORT", 8000)
 }
 
-func GetWebsocketServerPort() int {
-	return getPortOrReturnDefault("WEBSOCKET_SERVER_PORT", 8080)
+func GetWebsocketClientPort() int {
+	return getPortOrReturnDefault("WEBSOCKET_SERVER_PORT", 8888)
+}
+
+func GetWebsocketServerHost() string {
+	return getEnv("WEBSOCKET_SERVER_HOST", "localhost")
+}
+
+func GetWebsocketServerEndpoint() string {
+	return getEnv("WEBSOCKET_SERVER_ENDPOINT", "/requests")
 }
 
 func GetProxyCertPath() string {
