@@ -3,9 +3,10 @@ package database
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"os"
 )
 
 func CreateDatabaseURI() string {
@@ -18,8 +19,7 @@ func CreateDatabaseURI() string {
 	return fmt.Sprintf("mongodb://%s:%s@%s:%s/%s", user, password, host, port, database)
 }
 
-func InitializeDatabase() *mongo.Database {
-
+func InitializeDatabase() {
 	database_uri := CreateDatabaseURI()
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(database_uri))
 
@@ -30,7 +30,7 @@ func InitializeDatabase() *mongo.Database {
 	println(fmt.Sprintf("Connected to database: %v", database_uri))
 
 	db := client.Database("proxy")
-	return db
+	Db = db
 }
 
-var Db = InitializeDatabase()
+var Db *mongo.Database

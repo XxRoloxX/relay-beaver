@@ -4,6 +4,7 @@ import (
 	"backend/internal/auth"
 	clientevent "backend/internal/client_event"
 	"backend/internal/common"
+	"backend/internal/database"
 	"backend/internal/logger"
 	proxyevent "backend/internal/proxy_event"
 	proxyrule "backend/internal/proxy_rule"
@@ -13,6 +14,12 @@ import (
 )
 
 func main() {
+	err := godotenv.Load(".env.example")
+	if err != nil {
+		panic(err)
+	}
+
+	database.InitializeDatabase()
 	router := mux.NewRouter()
 
 	connectionHub := connectionpool.NewHub()
