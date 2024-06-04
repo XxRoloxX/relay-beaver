@@ -78,7 +78,7 @@ services:
       - WEBSOCKET_SERVER_PORT=${WEBSOCKET_SERVER_PORT}
       - WEBSOCKET_SERVER_ENDPOINT=${WEBSOCKET_SERVER_ENDPOINT}
     ports:
-      - 9000:8000
+      - 8000:8000
       - 9080:8080
     volumes:
       - ./proxy/proxy.crt:${PROXY_CERT_PATH}
