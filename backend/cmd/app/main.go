@@ -20,14 +20,14 @@ func main() {
 	connectionHub := connectionpool.NewHub()
 	go connectionHub.Run()
 
-	authMiddleware := auth.NewAuthMiddleware()
+	// authMiddleware := auth.NewAuthMiddleware()
 	loggerMiddleware := logger.NewLoggerMiddleware()
 	router.Use(loggerMiddleware.Handler)
 
 	_ = auth.GetAuthRouter(router.PathPrefix("/auth").Subrouter())
 
-	proxyRuleRouter := proxyrule.GetProxyRuleRouter(router.PathPrefix("/proxy-rules").Subrouter())
-	proxyRuleRouter.Use(authMiddleware.Handler)
+	_ = proxyrule.GetProxyRuleRouter(router.PathPrefix("/proxy-rules").Subrouter())
+	// proxyRuleRouter.Use(authMiddleware.Handler)
 
 	_ = proxyevent.GetProxyEventsRouter(connectionHub, router.PathPrefix("/ws").Subrouter())
 

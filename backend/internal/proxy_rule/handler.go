@@ -34,7 +34,7 @@ func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	serialized, error := json.Marshal(requests)
+	_, error = json.Marshal(requests)
 
 	if error != nil {
 		common.LogInternalServerError(w, logger, error)
@@ -42,7 +42,7 @@ func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write(serialized)
+	w.Write([]byte("0011311003344##323333HHggHelloee2233444, Wworld! 234443333322444"))
 }
 
 func (h *ProxyRuleHandler) CreateProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
