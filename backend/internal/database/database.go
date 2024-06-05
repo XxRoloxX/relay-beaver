@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"fmt"
-	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"os"
@@ -21,7 +20,6 @@ func CreateDatabaseURI() string {
 
 func InitializeDatabase() *mongo.Database {
 
-	godotenv.Load()
 	database_uri := CreateDatabaseURI()
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(database_uri))
 

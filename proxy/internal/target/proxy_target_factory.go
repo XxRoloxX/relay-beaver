@@ -17,6 +17,10 @@ func (p *RuleEntryProviderFactory) ProxyTarget() RuleEntryProvider {
 
 func getMockedProxyRuleEntries() map[string]ProxyRuleEntry {
 	proxyRuleEntries := make(map[string]ProxyRuleEntry)
-	proxyRuleEntries["Host: localhost"] = ProxyRuleEntry{host: "localhost:8080", targets: []ProxyTarget{*NewProxyTarget("localhost", "8081")}, addedHeaders: nil, loadBalancer: &RoundRobinLoadBalancer{}}
+	proxyRuleEntries["Host: localhost"] = ProxyRuleEntry{
+		host:         "localhost:8000",
+		targets:      []ProxyTarget{*NewProxyTarget("frontend", "80")},
+		addedHeaders: nil, loadBalancer: &RoundRobinLoadBalancer{},
+	}
 	return proxyRuleEntries
 }

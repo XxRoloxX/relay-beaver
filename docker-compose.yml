@@ -1,0 +1,92 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend
+          target: /src
+    healthcheck:
+      test: curl --fail http://localhost:8080 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_HOST=${MONGO_HOST}
+      - MONGO_PORT=${MONGO_PORT}
+      - MONGO_DB=${MONGO_DB}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - FRONTEND_URL=${FRONTEND_URL}
+  database:
+    image: mongo
+    volumes:
+      - db-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: database
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+    depends_on:
+      - database
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+        - VITE_GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+        - VITE_BACKEND_URL=${VITE_BACKEND_URL}
+        - VITE_BACKEND_WS_URL=${VITE_BACKEND_WS_URL}
+    ports:
+      - "80:80"
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend/src
+          target: /app/src
+        - action: rebuild
+          path: ./frontend/package.json
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - PROXY_CERT_PATH=${PROXY_CERT_PATH}
+      - PROXY_KEY_PATH=${PROXY_KEY_PATH}
+      - PROXY_SERVER_PORT=${PROXY_SERVER_PORT}
+      - WEBSOCKET_SERVER_HOST=${WEBSOCKET_SERVER_HOST}
+      - WEBSOCKET_SERVER_PORT=${WEBSOCKET_SERVER_PORT}
+      - WEBSOCKET_SERVER_ENDPOINT=${WEBSOCKET_SERVER_ENDPOINT}
+    ports:
+      - 8000:8000
+      - 9080:8080
+    volumes:
+      - ./proxy/proxy.crt:${PROXY_CERT_PATH}
+      - ./proxy/proxy.key:${PROXY_KEY_PATH}
+    develop:
+      watch:
+        - action: rebuild
+          path: ./proxy
+          target: /app
+volumes:
+  db-data:

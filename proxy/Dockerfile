@@ -1,15 +1,26 @@
-FROM golang:latest
+FROM golang:latest as build
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+RUN go env -w GOCACHE=/go/pkg/mod/
 
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+    --mount=type=bind,source=go.sum,target=go.sum \
+    --mount=type=bind,source=go.mod,target=go.mod \
+    go mod download -x
 
 COPY . .
 
-RUN go build -o proxy cmd/app/main.go
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+    go build -o /bin/server ./cmd/app/
+
+FROM debian:latest AS final
+
+ARG UID=10001
+
+COPY --from=build /bin/server /bin/
 
 EXPOSE 8080
 
-CMD ["./server"]
+ENTRYPOINT [ "/bin/server" ]
+

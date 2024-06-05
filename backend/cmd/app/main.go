@@ -9,13 +9,11 @@ import (
 	proxyrule "backend/internal/proxy_rule"
 	connectionpool "backend/pkg/connection_pool"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	"net/http"
 )
 
 func main() {
 	router := mux.NewRouter()
-	godotenv.Load()
 
 	connectionHub := connectionpool.NewHub()
 	go connectionHub.Run()
