@@ -1,35 +1,37 @@
 import { useEffect, useState } from 'react';
 import './Config.scss'
-import { fetchProxyRules } from './configLogic';
 import { ProxyRule } from './configLogic';
 import AccordionItem from './components/AccordionItem/AccordionItem';
-import { deleteProxyRule } from '../../api/proxyApi';
+// import { fetchProxyRules } from './configLogic';
+// import { deleteProxyRule } from '../../api/proxyApi';
 
 const Config = () => {
 
   const [proxyRules, setProxyRules] = useState<ProxyRule[]>([])
 
+  // console.log(setProxyRules);
   useEffect(() => {
-    const fetch = async () => {
-      const rules = await fetchProxyRules();
-      setProxyRules(rules);
-    }
-    fetch();
+    console.log('test')
+    // const fetch = async () => {
+    //   const rules = await fetchProxyRules();
+    //   setProxyRules(rules);
+    // }
+    // fetch();
   }, []);
 
   function newProxyRule() {
     setProxyRules([...proxyRules, {id: "", Destination: {host: "", port: 0}, Targets: [], LoadBalancer: {name: ""}}])
   }
 
-  function deleteRule(idx: number, id: string) {
-    const newRules = proxyRules.slice();
-    newRules.splice(idx, 1);
-    setProxyRules(newRules);
-    deleteProxyRule(id)
-    .then((response) => {
-      console.log(response);
-    });
-  }
+  // function deleteRule(idx: number, id: string) {
+  //   const newRules = proxyRules.slice();
+  //   newRules.splice(idx, 1);
+  //   setProxyRules(newRules);
+  //   deleteProxyRule(id)
+  //   .then((response) => {
+  //     console.log(response);
+  //   });
+  // }
 
   return (
     <>
@@ -49,7 +51,7 @@ const Config = () => {
                     <AccordionItem 
                       proxyRule={proxyRule}
                       proxyRuleIdx={idx}
-                      deleteProxyRule={deleteRule}
+                      deleteProxyRule={(a: number, b: string) => console.log(a, b)}
                     />
                   </div>
                 )
