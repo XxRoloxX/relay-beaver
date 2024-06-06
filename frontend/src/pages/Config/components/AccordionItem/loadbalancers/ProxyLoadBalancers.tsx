@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { LoadBalancer } from "../../../configLogic"
 import "./ProxyLoadBalancers.scss"
 
@@ -6,6 +7,14 @@ interface Props {
 }
 
 const ProxyLoadBalancers: React.FC<Props> = ({ loadBalancer }) => {
+    
+    const [lb, setLb] = useState<LoadBalancer>(loadBalancer);
+
+    useEffect(() => {
+        console.log(lb);
+        setLb(loadBalancer);
+    })
+    
     return (
         <div>
             <h3 className="lb-header">Load Balancer</h3>

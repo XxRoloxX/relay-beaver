@@ -25,7 +25,7 @@ const ProxyHeaders = () => {
                         <div>
                             <div className="grid-item">Name</div>
                             {
-                                headers.map((header, idx) => {
+                                headers.map((header) => {
                                     return <input className="input-left" value={header.name}/>
                                 })
                             }

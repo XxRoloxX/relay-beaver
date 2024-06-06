@@ -1,6 +1,6 @@
 import "./ProxyTargets.scss"
 import { Address } from "../../../configLogic"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 interface Props {
     proxyTargets: Address[]
