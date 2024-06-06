@@ -1,0 +1,65 @@
+@import "@/variables.scss";
+
+@mixin corner-curve($px) {
+    border-top-left-radius: $px;
+    border-top-right-radius: $px;
+    border-bottom-left-radius: $px;
+    border-bottom-right-radius: $px;
+}
+
+.target-header {
+    position: relative;
+    left: 2%;
+}
+
+.targets {
+    @include corner-curve(15px);
+    height: 290px;
+    background-color: $tertiary;
+    padding: 2%;
+    position: relative;
+
+    &__entry {
+        @include corner-curve(15px);
+        border: solid;
+        border-color: $primary;
+        background-color: $quaternary;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 2%;
+        margin-bottom: 5px;
+    }
+
+    &__add-btn {
+        background-color: $accent;
+        color: black;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        margin: 5%;
+    }
+
+    &__status-indicator {
+        float: right;
+        background-color: green;
+        margin-left: 10px;
+        margin-right: 10px;
+        border-radius: 50%;
+        border-style: solid;
+        border-width: 0.5px;
+        border-color: black;
+        height: 25px;
+        width: 25px;
+    }
+
+    input {
+        background-color: $quaternary;
+        border: none;
+        outline: none;
+    }
+
+    p {
+        display: inline-block;
+    }
+}

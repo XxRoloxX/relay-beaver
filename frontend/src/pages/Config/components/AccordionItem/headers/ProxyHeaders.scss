@@ -1,0 +1,84 @@
+@import "@/variables.scss";
+
+@mixin corner-curve($px) {
+  border-top-left-radius: $px;
+  border-top-right-radius: $px;
+  border-bottom-left-radius: $px;
+  border-bottom-right-radius: $px;
+}
+
+.headers-header {
+  position: relative;
+  left: 10%;
+}
+
+.proxy-headers {
+    @include corner-curve(15px);
+    width: 85%;
+    height: 300px;
+    border: solid;
+    border: $quaternary;
+    position: relative;
+    margin: auto;
+    background-color: $tertiary;
+
+    &__add-btn {
+      position: absolute;
+      background-color: $accent;
+      color: black;
+      bottom: 0;
+      right: 0;
+      margin: 5%;
+    }
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 35% auto 65%;
+  width: 90%;
+  height: 100%;
+  margin-left: 4px;
+}
+
+.grid-item {
+  border-bottom: 1px solid #ccc;
+  width: 90%;
+  margin-left: 10px;
+  padding: 10px;
+  height: 25px;
+}
+
+.trash-icon {
+  cursor: pointer;
+  margin-top: 5px;
+  margin-bottom: 4px;
+  width: 15px;
+  height: 15px;
+  float: right;
+  display: block;
+}
+
+.input-left {
+  font-size: 15px;
+  margin-left: 20px;
+  width: 75px;
+  background-color: $tertiary;
+  border: none;
+  outline: none;
+}
+
+.input-right {
+  font-size: 15px;
+  margin-left: 20px;
+  width: 100px;
+  background-color: $tertiary;
+  border: none;
+  outline: none;
+  display: inline-block;
+}
+
+.separator {
+    border-right: 1px solid #ccc;
+    margin-top: 10px;
+    height: 280px;
+}

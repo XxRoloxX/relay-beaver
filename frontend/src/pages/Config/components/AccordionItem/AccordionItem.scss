@@ -1,0 +1,150 @@
+@import "@/variables.scss";
+
+@mixin corner-curve($px) {
+  border-top-left-radius: $px;
+  border-top-right-radius: $px;
+  border-bottom-left-radius: $px;
+  border-bottom-right-radius: $px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.accordion-title {
+  @include corner-curve(15px);
+  display: flex;
+  flex-direction: row;
+  background-color: $quaternary;
+
+  &__service-name {
+    width: 30%;
+    margin-left: 5%;
+    margin-top: auto;
+    margin-bottom: auto;
+    max-width: 200px;
+    padding: 5px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    outline: none;
+  }
+
+  &__info-icon {
+    width: 10%;
+    margin-left: 20px;
+
+    img {
+      margin-top: 10px;
+    }
+  }
+  
+  &__active-targets {
+    width: 60%;
+    text-align: right;
+
+    p {
+      margin-top: 15px;
+    }
+
+    &__status-indicator {
+      display: inline-block;
+      background-color: #32CD32;
+      margin-left: 10px;
+      margin-right: 10px;
+      margin-bottom: -4px;
+      border-radius: 50%;
+      border-style: solid;
+      border-width: 0.5px;
+      border-color: black;
+      height: 25px;
+      width: 25px;
+    }
+  }  
+
+  &__open {
+    width: 5%;
+    font-size: 40px;
+    margin-right: 5px;
+    cursor: pointer;
+    text-align: right;
+
+    p {
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+  }
+  
+  &__delete {
+    position: relative;
+    width: 5%;
+    margin-right: 15px;
+    cursor: pointer;
+
+    svg {
+      margin-left: 10px;
+      margin-top: 21px;
+    }
+  }
+  
+  &__targets-info {
+    font-size: 25px;
+    display: inline-block;
+  }
+}
+
+.accordion-title:hover {
+  background-color: $primary;
+}
+
+.accordion-content {
+  max-width: 1250px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 1rem;
+
+  &__column {
+    float: left;
+    width: 33.33%;
+  }
+
+  &__button--apply {
+    position: relative;
+    background-color: greenyellow;
+    width: 150px;
+    margin-left: 30px;
+  }
+  
+  &__button--cancel {
+    position: relative;
+    background-color: $accent;
+    width: 150px;
+    margin-top: 47%;
+    margin-left: 40px;
+  }
+
+  hr {
+    width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -3px;
+    margin-bottom: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .accordion-content {
+    flex-direction: column;
+  }
+
+  .accordion-content__column {
+    flex-grow: 1;
+    margin: auto;
+    width: 85%;
+  }
+}

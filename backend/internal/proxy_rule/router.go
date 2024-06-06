@@ -8,8 +8,8 @@ func GetProxyRuleRouter(router *mux.Router) *mux.Router {
 
 	router.HandleFunc("", proxyRuleHandler.CreateProxyRuleHandler).Methods("POST")
 	router.HandleFunc("", proxyRuleHandler.GetProxyRuleHandler).Methods("GET")
-	router.HandleFunc("{id}", proxyRuleHandler.UpdateProxyRuleHandler).Methods("PUT")
-	router.HandleFunc("{id}", proxyRuleHandler.DeleteProxyRuleHandler).Methods("DELETE")
+	router.HandleFunc("/{id}", proxyRuleHandler.UpdateProxyRuleHandler).Methods("PUT")
+	router.HandleFunc("/{id}", proxyRuleHandler.DeleteProxyRuleHandler).Methods("DELETE")
 
 	return router
 }
