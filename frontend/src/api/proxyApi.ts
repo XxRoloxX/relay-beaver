@@ -29,4 +29,5 @@ export const getRequests = async () => {
 };
 export const logout = async () => {
   document.cookie = "id_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.location.href = "/";
 };

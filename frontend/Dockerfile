@@ -11,21 +11,21 @@ WORKDIR /app
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
 
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY . /app
 
 ENV CI=true
-ENV PORT=3000
+ENV PORT=80
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "dev"]
 
 FROM development AS build
 
 RUN npm run build
 
 # 2. For Nginx setup
-FROM nginx:alpine
+FROM nginx:alpine as production
 
 # Copy config nginx
 COPY --from=build /app/.nginx/nginx.conf /etc/nginx/conf.d/default.conf

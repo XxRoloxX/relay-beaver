@@ -1,0 +1,19 @@
+services:
+  frontend:
+    container_name: relay-beaver-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    environment:
+      - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - VITE_GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
+      - VITE_BACKEND_WS_URL=${VITE_BACKEND_WS_URL}
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/src
+          target: /app/src
+        - action: rebuild
+          path: ./frontend/package.json
