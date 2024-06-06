@@ -1,5 +1,6 @@
 services:
   backend:
+    container_name: relay-beaver-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -26,6 +27,7 @@ services:
       - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
       - FRONTEND_URL=${FRONTEND_URL}
   database:
+    container_name: relay-beaver-database
     image: mongo
     volumes:
       - db-data:/data/db
@@ -38,6 +40,7 @@ services:
       timeout: 5s
       retries: 5
   mongo-express:
+    container_name: relay-beaver-mongo-express
     image: mongo-express
     ports:
       - 8081:8081
@@ -48,9 +51,11 @@ services:
     depends_on:
       - database
   frontend:
+    container_name: relay-beaver-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: production
       args:
         - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
         - VITE_GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
@@ -58,14 +63,8 @@ services:
         - VITE_BACKEND_WS_URL=${VITE_BACKEND_WS_URL}
     ports:
       - "80:80"
-    develop:
-      watch:
-        - action: rebuild
-          path: ./frontend/src
-          target: /app/src
-        - action: rebuild
-          path: ./frontend/package.json
   proxy:
+    container_name: relay-beaver-proxy
     build:
       context: ./proxy
       dockerfile: Dockerfile
