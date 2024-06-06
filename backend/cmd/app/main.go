@@ -9,9 +9,10 @@ import (
 	proxyevent "backend/internal/proxy_event"
 	proxyrule "backend/internal/proxy_rule"
 	connectionpool "backend/pkg/connection_pool"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"net/http"
 )
 
 func main() {
