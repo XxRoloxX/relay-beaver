@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -87,16 +88,31 @@ func (r ProxyRuleMongoRepository) FindAll() ([]models.ProxyRule, error) {
 }
 
 func (r ProxyRuleMongoRepository) Update(id string, proxyRuleEntry models.ProxyRule) (models.ProxyRule, error) {
-	modifiedEntry := r.getProxyRuleCollection().FindOneAndUpdate(context.TODO(), id, proxyRuleEntry)
-
-	if modifiedEntry.Err() != nil {
-		return models.ProxyRule{}, modifiedEntry.Err()
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return models.ProxyRule{}, err
 	}
-	var updatedEntry models.ProxyRule
+	filter := bson.D{{"_id", objID}}
 
-	modifiedEntry.Decode(&updatedEntry)
+	updateDoc := bson.M{}
+	bsonBytes, _ := bson.Marshal(proxyRuleEntry)
+	err = bson.Unmarshal(bsonBytes, &updateDoc)
+	if err != nil {
+		return models.ProxyRule{}, err
+	}
 
-	return updatedEntry, nil
+	delete(updateDoc, "_id")
+	update := bson.D{{"$set", updateDoc}}
+
+	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	var updatedRule models.ProxyRule
+	err = r.getProxyRuleCollection().FindOneAndUpdate(context.TODO(), filter, update, opts).Decode(&updatedRule)
+	if err != nil {
+		return models.ProxyRule{}, err
+	}
+
+	return updatedRule, nil
 }
 
 func (r ProxyRuleMongoRepository) Delete(id string) error {
