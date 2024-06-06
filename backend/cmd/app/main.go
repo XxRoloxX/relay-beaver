@@ -9,8 +9,11 @@ import (
 	proxyevent "backend/internal/proxy_event"
 	proxyrule "backend/internal/proxy_rule"
 	connectionpool "backend/pkg/connection_pool"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
