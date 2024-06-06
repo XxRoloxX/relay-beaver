@@ -22,7 +22,6 @@ export const getProxyRules = async () => {
   const response = await proxyAxios.get("/proxy-rules");
   return response.data;
 };
-
 export const getRequests = async () => {
   const response = await proxyAxios.get("/requests");
   return response.data;

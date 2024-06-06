@@ -1,6 +1,8 @@
 services:
   frontend:
-    container_name: relay-beaver-frontend
+    extends:
+      file: docker-compose.yml
+      service: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
