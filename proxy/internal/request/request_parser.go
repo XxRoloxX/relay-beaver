@@ -25,20 +25,8 @@ func NewSimpleRequestParser(requestChannel chan ProxiedRequest) RequestParser {
 }
 
 func (p *SimpleRequestParser) ParseRequest(requestContent string, responseContent string, target string, startTime int64, endTime int64) {
-	// requestInfo := strings.Split(strings.Split(requestContent, "\r\n\r\n")[0], "\r\n")
-	// request := Request{}
-	//
-	// httpPart := requestInfo[0]
-	// populateHttpInfo(httpPart, &request)
-	//
-	// headersPart := requestInfo[1:]
-	// populateHttpHeaders(headersPart, &request)
-
 	requestHttpMessage := httpmessage.FromString(requestContent)
 	responseHttpMessage := httpmessage.FromString(responseContent)
-
-	// println(requestHttpMessage.ToString())
-	// println(responseHttpMessage.ToString())
 
 	proxiedRequest, err := ProxiedRequestFromHttpMessages(
 		&requestHttpMessage,
