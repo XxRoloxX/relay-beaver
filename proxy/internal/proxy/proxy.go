@@ -1,13 +1,12 @@
 package proxy
 
 import (
-	// "crypto/tls"
+	"crypto/tls"
 	"fmt"
 	"net"
 	"proxy/internal/http_message"
 	"proxy/internal/proxy_rule_entry"
 	request2 "proxy/internal/request"
-	// "proxy/internal/target"
 	"strings"
 	"time"
 
@@ -58,20 +57,14 @@ func (p *Proxy) Start() error {
 }
 
 func (p *Proxy) listenOnSocket(port int, socket Socket) error {
-	// crt, err := tls.LoadX509KeyPair(p.certPath, p.keyPath)
-	// if err != nil {
-	// 	log.Error().Msg(fmt.Sprintf("error loading key pair: %s", err))
-	// 	return err
-	// }
-	//
-	// config := &tls.Config{Certificates: []tls.Certificate{crt}}
-	// ln, err := tls.Listen(socket.String(), fmt.Sprintf(":%d", port), config)
-	// if err != nil {
-	// 	log.Error().Msg(fmt.Sprintf("error binding tcp socket: %s", err))
-	// 	return err
-	// }
+	crt, err := tls.LoadX509KeyPair(p.certPath, p.keyPath)
+	if err != nil {
+		log.Error().Msg(fmt.Sprintf("error loading key pair: %s", err))
+		return err
+	}
 
-	ln, err := net.Listen(socket.String(), fmt.Sprintf(":%d", port))
+	config := &tls.Config{Certificates: []tls.Certificate{crt}}
+	ln, err := tls.Listen(socket.String(), fmt.Sprintf(":%d", port), config)
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("error binding tcp socket: %s", err))
 		return err
@@ -111,8 +104,6 @@ func (p *Proxy) handleConnection(buffer ConnectionBuffer) {
 	}
 
 	response, err := p.proxy(req, proxyAddress)
-	println("Request", req)
-	println("Response", response)
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("failed proxying to destination: %s, error: %s", proxyAddress, err))
 		return
@@ -154,14 +145,15 @@ func (p *Proxy) proxy(content string, proxyAddress string) (string, error) {
 		log.Error().Msg(fmt.Sprintf("Error reading response from destination %s, reading from buffer failed", proxyAddress))
 		return "", err
 	}
-	newString := strings.Replace(response, "\n\n", "\r\n\r\n", -1)
 
-	return strings.Replace(newString, "\n", "\r\n", 1), nil
+	return replaceNewLinesWithCRLF(response), nil
+}
+
+func replaceNewLinesWithCRLF(content string) string {
+	return strings.Replace(strings.Replace(content, "\n\n", "\r\n\r\n", -1), "\n", "\r\n", 1)
 }
 
 func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
-	// res := strings.Split(request, "\r\n")
-
 	requestMessage := httpmessage.FromString(request)
 	host := requestMessage.GetHeader("Host")
 
@@ -169,46 +161,9 @@ func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
 		return "", "", fmt.Errorf("no host header found")
 	}
 
-	println(fmt.Sprintf("host: %s", host))
-
 	proxyRule := p.provider.GetProxyRuleEntry(host)
-	println(fmt.Sprintf("proxyRule: %+v", proxyRule))
 	proxyTarget := proxyRule.GetProxyTarget()
 	requestMessage.SetHeader("Host", proxyTarget.GetURL())
 
 	return requestMessage.ToString(), proxyTarget.GetURL(), nil
-
-	// for i := 0; i < len(res); i++ {
-	// 	line := res[i]
-	// 	if strings.HasPrefix(line, "Host: ") {
-	// 		hostSplit := strings.Split(line, ":")
-	// 		host := strings.Join(hostSplit[:2], ":")
-	//
-	// 		proxyRule := p.provider.GetProxyRuleEntry(host)
-	//
-	// 		proxyTarget := proxyRule.GetProxyTarget()
-	// 		res[i] = fmt.Sprintf("Host: %s", proxyTarget.GetURL())
-	// 		return strings.Join(p.appendHeaders(res, proxyRule.GetAddedHeaders()), "\r\n") + "\r\n",
-	// 			proxyTarget.GetURL(), nil
-	// 	}
-	// }
-	//
-	// return "", "", fmt.Errorf("no host header found")
 }
-
-// func (p *Proxy) appendHeaders(request []string, addedHeaders []httpmessage.Header) []string {
-// 	headers := make([]string, 0)
-// 	for _, header := range addedHeaders {
-// 		headers = append(headers, fmt.Sprintf("%s: %s", header.Key, header.Value))
-// 	}
-//
-// 	res := make([]string, 1)
-// 	res[0] = request[0]
-// 	res = append(res, headers...)
-//
-// 	if len(request) > 1 {
-// 		res = append(res, request[1:]...)
-// 	}
-//
-// 	return res
-// }

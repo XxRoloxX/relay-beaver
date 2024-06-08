@@ -1,4 +1,5 @@
 import useTraffic from "../../../hooks/useTraffic";
+import { defaultDateFromUnixTimestamp } from "../../../lib/date";
 import "./TrafficTable.scss";
 
 const TrafficTable = () => {
@@ -19,7 +20,7 @@ const TrafficTable = () => {
       <tbody>
         {traffic.map((request, index) => (
           <tr key={index} className="table__row">
-            <td>{new Date(request.startTime * 1000).toLocaleString()}</td>
+            <td>{defaultDateFromUnixTimestamp(request.startTime)}</td>
             <td>{request.getHost()}</td>
             <td>{request.request.method}</td>
             <td>{request.target}</td>
