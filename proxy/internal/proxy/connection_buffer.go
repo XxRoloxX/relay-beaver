@@ -58,5 +58,5 @@ func (c *ConnectionBuffer) readChunkFromBuffer() ([]byte, int, error) {
 		log.Error().Msg("Error reading content chunk from buffer")
 		return buf, 0, err
 	}
-	return buf, bytesRead, nil
+	return bytes.Trim(buf, "\u0000"), bytesRead, nil
 }

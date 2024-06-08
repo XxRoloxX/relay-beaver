@@ -31,6 +31,27 @@ func GetProxyKeyPath() string {
 	return getEnv("PROXY_KEY_PATH", "proxy.key")
 }
 
+func GetProxyBackendAuthSecret() string {
+	return getEnv("PROXY_AUTH_SECRET", "")
+}
+
+func GetProxyBackendAuthHeader() string {
+	return getEnv("PROXY_AUTH_HEADER", "X-Auth-Secret")
+}
+
+func GetProxyBackendHost() string {
+	return getEnv("PROXY_BACKEND_API_HOST", "localhost")
+}
+func GetProxyBackendPort() int {
+	res := getEnv("PROXY_BACKEND_API_PORT", "8080")
+	port, err := strconv.Atoi(res)
+	if err != nil {
+		log.Error().Msg(fmt.Sprintf("error parsing port: %s", err.Error()))
+		return 8080
+	}
+	return port
+}
+
 func getPortOrReturnDefault(env string, fallback int) int {
 	portEnv := getEnv(env, "")
 

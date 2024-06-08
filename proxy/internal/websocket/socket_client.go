@@ -8,19 +8,25 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"proxy/internal/env"
 	"proxy/internal/request"
 )
 
 type WebsocketClient struct {
 	upgrader websocket.Upgrader
-	channel  chan request.Request
+	channel  chan request.ProxiedRequest
 	host     string
 	port     int
 	address  string
 	endpoint string
 }
 
-func NewWebsocketServer(channel chan request.Request, host string, port int, endpoint string) *WebsocketClient {
+type EventMessage struct {
+	Type           string                 `json:"type"`
+	ProxiedRequest request.ProxiedRequest `json:"proxiedRequest"`
+}
+
+func NewWebsocketServer(channel chan request.ProxiedRequest, host string, port int, endpoint string) *WebsocketClient {
 	return &WebsocketClient{
 		upgrader: websocket.Upgrader{},
 		channel:  channel,
@@ -35,7 +41,10 @@ func (u *WebsocketClient) Connect() error {
 	wsUrl := url.URL{Scheme: "ws", Host: u.address, Path: u.endpoint}
 
 	log.Info().Msg(fmt.Sprintf("Connecting to websocket server at: %s", wsUrl.String()))
-	conn, _, err := websocket.DefaultDialer.Dial(wsUrl.String(), nil)
+	headers := make(map[string][]string)
+	headers[env.GetProxyBackendAuthHeader()] = []string{env.GetProxyBackendAuthSecret()}
+
+	conn, _, err := websocket.DefaultDialer.Dial(wsUrl.String(), headers)
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("Error connecting to websocket server: %s", err))
 		return err
@@ -47,13 +56,20 @@ func (u *WebsocketClient) Connect() error {
 	for {
 		select {
 		case req := <-u.channel:
-			res, err := json.Marshal(&req)
+
+			message := EventMessage{
+				Type:           "proxiedRequest",
+				ProxiedRequest: req,
+			}
+			res, err := json.Marshal(&message)
 			if err != nil {
 				log.Error().Msg("Error parsing request as JSON")
 			}
 
 			err = conn.WriteMessage(1, res)
+
 			if err != nil {
+				log.Error().Err(err).Msg("Error writing request message")
 				log.Error().Msg("Error writing request message")
 			}
 		case <-interrupt:

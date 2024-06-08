@@ -1,17 +1,19 @@
 package target
 
-type ProxyTarget struct {
-	host string
-	port string
+import "strconv"
+
+type HostAddress struct {
+	Host string `json:"host" bson:"host"`
+	Port int    `json:"port" bson:"port"`
 }
 
-func (p *ProxyTarget) GetURL() string {
-	return p.host + ":" + p.port
+func (p *HostAddress) GetURL() string {
+	return p.Host + ":" + strconv.Itoa(p.Port)
 }
 
-func NewProxyTarget(host string, port string) *ProxyTarget {
-	return &ProxyTarget{
-		host: host,
-		port: port,
+func NewHostAddress(host string, port int) *HostAddress {
+	return &HostAddress{
+		Host: host,
+		Port: port,
 	}
 }
