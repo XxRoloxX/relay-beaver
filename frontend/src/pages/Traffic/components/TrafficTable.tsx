@@ -8,6 +8,7 @@ const TrafficTable = () => {
     <table className="table">
       <thead className="table__header">
         <tr className="table__row">
+          <th>Date</th>
           <th>Destination</th>
           <th>Method</th>
           <th>Target</th>
@@ -18,10 +19,11 @@ const TrafficTable = () => {
       <tbody>
         {traffic.map((request, index) => (
           <tr key={index} className="table__row">
-            <td>{request.destination}</td>
-            <td>{request.method}</td>
+            <td>{new Date(request.startTime * 1000).toLocaleString()}</td>
+            <td>{request.getHost()}</td>
+            <td>{request.request.method}</td>
             <td>{request.target}</td>
-            <td>{request.response}</td>
+            <td>{request.response.statusCode}</td>
             <td>
               <button className="table__button">Delete</button>
             </td>

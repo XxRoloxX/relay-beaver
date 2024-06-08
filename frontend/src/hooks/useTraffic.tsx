@@ -1,36 +1,8 @@
 import { useEffect, useState } from "react";
-
-export class Request {
-  public destination: string;
-  public method: string;
-  public target: string;
-  public response: string;
-
-  constructor(
-    destination: string = "",
-    method: string = "",
-    target: string = "",
-    response: string = "",
-  ) {
-    this.destination = destination;
-    this.method = method;
-    this.target = target;
-    this.response = response;
-  }
-
-  public static fromJson(json: string): Request {
-    const parsed = JSON.parse(json);
-    return new Request(
-      parsed.destination,
-      parsed.method,
-      parsed.target,
-      parsed.response,
-    );
-  }
-}
+import { ProxiedRequest } from "../api/proxiedRequestApi";
 
 const useTraffic = () => {
-  const [traffic, setTraffic] = useState<Request[]>([]);
+  const [traffic, setTraffic] = useState<ProxiedRequest[]>([]);
   const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
@@ -42,7 +14,15 @@ const useTraffic = () => {
     };
     socket.onmessage = (event) => {
       console.log("Message received: ", event.data);
-      setTraffic((prev) => [...prev, Request.fromJson(event.data)]);
+      setTraffic((prev) => {
+        try {
+          const newRequest = ProxiedRequest.fromJson(event.data);
+          return [newRequest, ...prev];
+        } catch (e) {
+          console.error("Failed to parse message: ", e);
+          return prev;
+        }
+      });
     };
     socket.onclose = () => {
       console.log("Socket closed");
