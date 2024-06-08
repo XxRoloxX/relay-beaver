@@ -8,12 +8,12 @@ type RequestService struct {
 	Repo RequestRepository
 }
 
-func (service RequestService) CreateRequest(request models.Request) (models.Request, error) {
+func (service RequestService) CreateRequest(request models.ProxiedRequest) (models.ProxiedRequest, error) {
 	return service.Repo.Create(request)
 }
-func (service RequestService) FindById(id string) (models.Request, error) {
+func (service RequestService) FindById(id string) (models.ProxiedRequest, error) {
 	return service.Repo.FindById(id)
 }
-func (service RequestService) FindAll() ([]models.Request, error) {
+func (service RequestService) FindAll() ([]models.ProxiedRequest, error) {
 	return service.Repo.FindAll()
 }

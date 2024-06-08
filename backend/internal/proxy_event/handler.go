@@ -4,12 +4,13 @@ import (
 	"backend/internal/database"
 	"backend/internal/logger"
 	"backend/internal/request"
-	"backend/pkg/connection_pool"
+	connectionpool "backend/pkg/connection_pool"
 	"backend/pkg/models"
 	"bytes"
 	"encoding/json"
-	"github.com/gorilla/websocket"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 type ProxyEventsHandler struct {
@@ -36,8 +37,8 @@ func NewProxyEventsHandler(connectionHub *connectionpool.Hub) ProxyEventsHandler
 }
 
 type EventMessage struct {
-	Type           string         `json:"type"`
-	ProxiedRequest models.Request `json: "proxiedRequest"`
+	Type           string                `json:"type"`
+	ProxiedRequest models.ProxiedRequest `json: "proxiedRequest"`
 }
 
 func (handler *ProxyEventsHandler) WebsocketRequestsHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +66,10 @@ func (handler *ProxyEventsHandler) WebsocketRequestsHandler(w http.ResponseWrite
 			return
 		}
 
-		handler.Service.HandleProxiedRequest(eventMessage)
-		handler.ConnectionHub.Broadcast(message)
+		proxiedRequest := eventMessage.ProxiedRequest
+
+		encodedProxiedRequest, err := json.Marshal(proxiedRequest)
+		handler.Service.HandleProxiedRequest(proxiedRequest)
+		handler.ConnectionHub.Broadcast(encodedProxiedRequest)
 	}
 }

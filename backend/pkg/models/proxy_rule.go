@@ -1,11 +1,12 @@
 package models
 
 type ProxyRule struct {
-	Id               string                `bson:"_id,omitempty" json:"id,omitempty"`
-	Destination      Address               `bson:"destination"`
-	Targets          []Address             `bson:"targets"`
-	LoadBalancer     LoadBalancer          `bson:"load_balancer"`
-	RequestModifiers []RequestModification `bson:"request_modifiers"`
+	Id           string       `bson:"_id,omitempty" json:"id,omitempty"`
+	Host         string       `bson:"host" json:"host"`
+	Targets      []Address    `bson:"targets" json:"targets"`
+	Headers      []Header     `bson:"headers "json:"headers"`
+	LoadBalancer LoadBalancer `bson:"load_balancer "json:"load_balancer"`
+	// RequestModifiers []RequestModification `bson:"request_modifiers"`
 	// ExternalHooks    []ExternalHook
 }
 

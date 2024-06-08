@@ -42,6 +42,7 @@ func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	w.WriteHeader(http.StatusOK)
+	// W.Write("Hello")
 	w.Write(serialized)
 
 }

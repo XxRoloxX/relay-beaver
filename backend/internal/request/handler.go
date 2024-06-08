@@ -29,7 +29,7 @@ func (h *RequestHandler) GetRequestsHandler(w http.ResponseWriter, r *http.Reque
 func (h *RequestHandler) PostRequestHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	encoder := json.NewEncoder(w)
-	var request models.Request
+	var request models.ProxiedRequest
 
 	err := decoder.Decode(&request)
 
