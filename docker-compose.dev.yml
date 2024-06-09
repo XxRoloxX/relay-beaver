@@ -1,8 +1,8 @@
 services:
   frontend:
-    extends:
-      file: docker-compose.yml
-      service: frontend
+    # extends:
+    #   file: docker-compose.yml
+    #   service: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile

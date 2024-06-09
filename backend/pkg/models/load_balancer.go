@@ -1,6 +1,6 @@
 package models
 
 type LoadBalancer struct {
-	Name     string
-	Balancer interface{}
+	Name   string
+	Params map[string]string
 }

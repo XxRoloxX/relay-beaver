@@ -3,11 +3,14 @@ package proxy
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"net"
+	"proxy/internal/http_message"
+	"proxy/internal/proxy_rule_entry"
 	request2 "proxy/internal/request"
-	"proxy/internal/target"
 	"strings"
+	"time"
+
+	"github.com/rs/zerolog/log"
 )
 
 type Socket int
@@ -28,11 +31,11 @@ type Proxy struct {
 	port     int
 	certPath string
 	keyPath  string
-	provider target.RuleEntryProvider
+	provider proxyruleentry.RuleEntryProvider
 	parser   request2.RequestParser
 }
 
-func NewProxy(port int, certPath string, keyPath string, provider target.RuleEntryProvider, parser request2.RequestParser) *Proxy {
+func NewProxy(port int, certPath string, keyPath string, provider proxyruleentry.RuleEntryProvider, parser request2.RequestParser) *Proxy {
 	return &Proxy{
 		port:     port,
 		certPath: certPath,
@@ -92,6 +95,8 @@ func (p *Proxy) handleConnection(buffer ConnectionBuffer) {
 		return
 	}
 
+	startTime := time.Now().Unix()
+
 	req, proxyAddress, err := p.parseHttpRequest(request)
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("error parsing request %s", err))
@@ -103,8 +108,12 @@ func (p *Proxy) handleConnection(buffer ConnectionBuffer) {
 		log.Error().Msg(fmt.Sprintf("failed proxying to destination: %s, error: %s", proxyAddress, err))
 		return
 	}
+	endTime := time.Now().Unix()
+
+	go p.parser.ParseRequest(request, response, proxyAddress, startTime, endTime)
 
 	bytesWritten, err := buffer.Write([]byte(response))
+
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("error writing response from destination %s, error: %s", proxyAddress, err))
 		return
@@ -137,43 +146,24 @@ func (p *Proxy) proxy(content string, proxyAddress string) (string, error) {
 		return "", err
 	}
 
-	return response, nil
+	return replaceNewLinesWithCRLF(response), nil
+}
+
+func replaceNewLinesWithCRLF(content string) string {
+	return strings.Replace(strings.Replace(content, "\n\n", "\r\n\r\n", -1), "\n", "\r\n", 1)
 }
 
 func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
-	res := strings.Split(request, "\r\n")
-	go p.parser.ParseRequest(request)
+	requestMessage := httpmessage.FromString(request)
+	host := requestMessage.GetHeader("Host")
 
-	for i := 0; i < len(res); i++ {
-		line := res[i]
-		if strings.HasPrefix(line, "Host: ") {
-			hostSplit := strings.Split(line, ":")
-			host := strings.Join(hostSplit[:2], ":")
-
-			proxyRule := p.provider.GetProxyRuleEntry(host)
-
-			proxyTarget := proxyRule.GetProxyTarget()
-			res[i] = fmt.Sprintf("Host: %s", proxyTarget.GetURL())
-			return strings.Join(p.appendHeaders(res, proxyRule.GetAddedHeaders()), "\r\n") + "\r\n", proxyTarget.GetURL(), nil
-		}
+	if host == "" {
+		return "", "", fmt.Errorf("no host header found")
 	}
 
-	return "", "", fmt.Errorf("no host header found")
-}
+	proxyRule := p.provider.GetProxyRuleEntry(host)
+	proxyTarget := proxyRule.GetProxyTarget()
+	requestMessage.SetHeader("Host", proxyTarget.GetURL())
 
-func (p *Proxy) appendHeaders(request []string, addedHeaders []request2.Header) []string {
-	headers := make([]string, 0)
-	for _, header := range addedHeaders {
-		headers = append(headers, fmt.Sprintf("%s: %s", header.Key, header.Value))
-	}
-
-	res := make([]string, 1)
-	res[0] = request[0]
-	res = append(res, headers...)
-
-	if len(request) > 1 {
-		res = append(res, request[1:]...)
-	}
-
-	return res
+	return requestMessage.ToString(), proxyTarget.GetURL(), nil
 }

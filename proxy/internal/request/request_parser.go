@@ -1,32 +1,46 @@
 package request
 
 import (
+	"fmt"
+	"github.com/rs/zerolog/log"
+	httpmessage "proxy/internal/http_message"
 	"strings"
 )
 
 type SimpleRequestParser struct {
-	RequestChannel chan Request
+	RequestChannel chan ProxiedRequest
 }
 
 type RequestParser interface {
-	ParseRequest(content string)
+	ParseRequest(
+		requestContent string,
+		responseContent string,
+		target string,
+		startTime int64,
+		endTime int64)
 }
 
-func NewSimpleRequestParser(requestChannel chan Request) RequestParser {
+func NewSimpleRequestParser(requestChannel chan ProxiedRequest) RequestParser {
 	return &SimpleRequestParser{RequestChannel: requestChannel}
 }
 
-func (p *SimpleRequestParser) ParseRequest(content string) {
-	requestInfo := strings.Split(strings.Split(content, "\r\n\r\n")[0], "\r\n")
-	request := Request{}
+func (p *SimpleRequestParser) ParseRequest(requestContent string, responseContent string, target string, startTime int64, endTime int64) {
+	requestHttpMessage := httpmessage.FromString(requestContent)
+	responseHttpMessage := httpmessage.FromString(responseContent)
 
-	httpPart := requestInfo[0]
-	populateHttpInfo(httpPart, &request)
+	proxiedRequest, err := ProxiedRequestFromHttpMessages(
+		&requestHttpMessage,
+		&responseHttpMessage,
+		target,
+		startTime,
+		endTime,
+	)
 
-	headersPart := requestInfo[1:]
-	populateHttpHeaders(headersPart, &request)
+	if err != nil {
+		log.Error().Msg(fmt.Sprintf("error creating proxied request: %s", err))
+	}
 
-	p.RequestChannel <- request
+	p.RequestChannel <- proxiedRequest
 }
 
 func (p *SimpleRequestParser) populateHttpInfo(content string, request *Request) {
@@ -37,12 +51,12 @@ func (p *SimpleRequestParser) populateHttpInfo(content string, request *Request)
 }
 
 func (p *SimpleRequestParser) populateHttpHeaders(content []string, request *Request) {
-	var headers []Header
+	var headers []httpmessage.Header
 	for _, header := range content {
 		headerParts := strings.Split(header, ":")
 		key := headerParts[0]
 		value := strings.Trim(headerParts[1], " ")
-		headers = append(headers, Header{Key: key, Value: value})
+		headers = append(headers, httpmessage.Header{Key: key, Value: value})
 	}
 
 	request.Headers = headers
@@ -56,12 +70,12 @@ func populateHttpInfo(content string, request *Request) {
 }
 
 func populateHttpHeaders(content []string, request *Request) {
-	var headers []Header
+	var headers []httpmessage.Header
 	for _, header := range content {
 		headerParts := strings.Split(header, ":")
 		key := headerParts[0]
 		value := strings.Trim(headerParts[1], " ")
-		headers = append(headers, Header{Key: key, Value: value})
+		headers = append(headers, httpmessage.Header{Key: key, Value: value})
 	}
 
 	request.Headers = headers

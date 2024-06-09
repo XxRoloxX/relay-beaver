@@ -3,6 +3,7 @@ package auth
 import (
 	"backend/internal/logger"
 	"net/http"
+	"os"
 )
 
 type AuthMiddleware struct {
@@ -27,10 +28,23 @@ func GetIdTokenFromCookie(r *http.Request) (string, error) {
 	return idToken.Value, nil
 }
 
+func (authMiddleware AuthMiddleware) isM2MAuthenticated(r *http.Request) bool {
+	authHeader := os.Getenv("PROXY_AUTH_HEADER")
+	authSecret := os.Getenv("PROXY_AUTH_SECRET")
+	return r.Header.Get(authHeader) == authSecret
+}
+
 func (authMiddleware AuthMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		logger := authMiddleware.Logger.Request(r)
+
+		if authMiddleware.isM2MAuthenticated(r) {
+			logger.Info("Authenticated with M2M")
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		idToken, err := GetIdTokenFromCookie(r)
 
 		if err != nil {
