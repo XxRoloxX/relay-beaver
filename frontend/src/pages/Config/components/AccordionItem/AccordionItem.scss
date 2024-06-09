@@ -29,17 +29,70 @@
     border-top-right-radius: 10px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    margin-right: 10px;
     outline: none;
   }
 
+  &__source {
+    width: 320px;
+    margin-left: 40px;
+
+    &__wrapper {
+      height: 35px;
+      margin-top: 15px;
+
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      background-color: $tertiary;
+
+      &__input--left {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border: none;
+        outline: none;
+        height: 100%;
+        width: 55%;
+        margin-left: 5px;
+        background-color: $tertiary;
+      }
+
+      &__input--right {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border: none;
+        outline: none;
+        height: 100%;
+        margin-left: 10px;
+        width: 35%;
+        background-color: $tertiary;
+      }
+    }
+  }
+
+  &__service-port {
+    width: 60px;
+    height: 20px;
+    margin: auto;
+  }
+
   &__info-icon {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
     width: 10%;
-    margin-left: 20px;
+    margin-left: 10px;
 
     img {
       margin-top: 10px;
     }
   }
+  
   
   &__active-targets {
     width: 60%;
@@ -95,6 +148,44 @@
   }
 }
 
+.tooltip {
+  visibility: hidden; /* Initially hide the tooltip */
+  width: 250px; /* Adjust the width as needed */
+  background-color: black; /* Tooltip background color */
+  color: #fff; /* Tooltip text color */
+  text-align: center; /* Center the text */
+  border-radius: 5px; /* Rounded corners */
+  padding: 5px 0; /* Padding inside the tooltip */
+  
+  /* Positioning */
+  position: absolute; /* Absolute positioning relative to the parent */
+  z-index: 1; /* Ensures the tooltip appears above other elements */
+  top: 100%; /* Position below the parent element */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Center the tooltip horizontally */
+  
+  /* Tooltip arrow */
+  opacity: 0; /* Initially hide the tooltip */
+  transition: opacity 0.3s; /* Smooth transition effect */
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: -5px; /* Position arrow at the top */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Center the arrow horizontally */
+  border-width: 5px; /* Size of the arrow */
+  border-style: solid;
+  border-color: transparent transparent black transparent; /* Arrow color */
+}
+
+.accordion-title__info-icon:hover .tooltip {
+  visibility: visible; /* Show the tooltip on hover */
+  opacity: 1; /* Make the tooltip opaque */
+}
+
+
 .accordion-title:hover {
   background-color: $primary;
 }
@@ -140,6 +231,14 @@
 @media (max-width: 768px) {
   .accordion-content {
     flex-direction: column;
+
+    &__button--apply {
+      width: 120px;
+    }
+
+    &__button--cancel {
+      width: 120px;
+    }
   }
 
   .accordion-content__column {
@@ -147,4 +246,16 @@
     margin: auto;
     width: 85%;
   }
+
+
+}
+
+.toast-message {
+  background-color: $secondary;
+  // color: $accent;
+  margin-bottom: 10px;
+}
+
+.toast-message-1 {
+  margin-top: 5px;
 }

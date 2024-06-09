@@ -1,5 +1,6 @@
 import { getProxyRules } from "../../api/proxyApi"
 
+// TODO -> fix
 export type Header = {
     name: string
     value: string
@@ -11,7 +12,7 @@ export type Address = {
 }
 
 export type LoadBalancer = {
-    name: string
+    Name: string
 }
 
 export type ProxyRule = {

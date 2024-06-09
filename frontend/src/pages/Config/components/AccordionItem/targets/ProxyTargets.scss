@@ -18,17 +18,38 @@
     background-color: $tertiary;
     padding: 2%;
     position: relative;
+  
 
     &__entry {
         @include corner-curve(15px);
+        display: flex; /* Add this line */
+        align-items: center; /* Add this line */
+        justify-content: space-between; /* Optional: distribute space between items */
         border: solid;
         border-color: $primary;
         background-color: $quaternary;
-        width: 80%;
+        max-width: 280px;
+        // width: 80%;
         margin-left: auto;
         margin-right: auto;
         padding: 2%;
         margin-bottom: 5px;
+        height: 30px;
+        
+        &__host {
+            width: 120px;
+        }
+        
+        &__port {
+            width: 60px;
+            margin-right: 28px;
+        }
+
+        svg {
+            display: inline-block;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
     }
 
     &__add-btn {
@@ -41,16 +62,16 @@
     }
 
     &__status-indicator {
-        float: right;
+        display: inline-block;
         background-color: green;
-        margin-left: 10px;
-        margin-right: 10px;
+        margin-bottom: 10px;
         border-radius: 50%;
         border-style: solid;
         border-width: 0.5px;
         border-color: black;
         height: 25px;
         width: 25px;
+        flex-shrink: 0;
     }
 
     input {
@@ -63,3 +84,19 @@
         display: inline-block;
     }
 }
+
+// @media (max-width: 768px) {
+//     .targets {
+        
+//         &__entry {
+//             svg {
+//                 margin-left: 25px;
+//             }
+//         }
+
+//         &__status-indicator {
+//             margin-right: 5px;
+//         }
+
+//     }
+// }

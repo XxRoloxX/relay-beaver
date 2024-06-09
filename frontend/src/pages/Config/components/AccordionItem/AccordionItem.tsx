@@ -3,8 +3,14 @@ import "./AccordionItem.scss"
 import ProxyHeaders from "./headers/ProxyHeaders"
 import ProxyTargets from "./targets/ProxyTargets"
 import ProxyLoadBalancers from "./loadbalancers/ProxyLoadBalancers"
-import { ProxyRule } from "../../configLogic"
+import { Address, LoadBalancer, ProxyRule } from "../../configLogic"
 import { createProxyRule, updateProxyRule } from "../../../../api/proxyApi"
+import { Form } from "react-router-dom"
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// toast.configure();
+// toast.Con
 
 interface Props {
     proxyRule: ProxyRule
@@ -17,8 +23,8 @@ const AccordionItem: React.FC<Props> = ({ proxyRule,  proxyRuleIdx, deleteProxyR
     const [isActive, setIsActive] = useState(false)
     const [rule, setRule] = useState<ProxyRule>(proxyRule);
 
-    function updateDestination(e: React.ChangeEvent<HTMLInputElement>) {
-        const newHost = e.target.value;
+    function updateDestinationHost(e: React.ChangeEvent<HTMLInputElement>) {
+        const newHost = e.target.value
         setRule(prevState => ({
             ...prevState,
             Destination: {
@@ -26,19 +32,64 @@ const AccordionItem: React.FC<Props> = ({ proxyRule,  proxyRuleIdx, deleteProxyR
                 host: newHost
             }
         }));
+    }   
+    
+    function updateDestinationPort(e: React.ChangeEvent<HTMLInputElement>) {
+        const newPort = e.target.value
+        setRule(prevState => ({
+            ...prevState,
+            Destination: {
+                ...prevState.Destination,
+                port: Number(newPort)
+            }
+        }));
     }
 
-    function apply(proxyRule: ProxyRule) {
-        console.log(proxyRule.id)
-        if(proxyRule.id === "") {
-            createProxyRule(proxyRule)
+    // function updateDestination(e: React.ChangeEvent<HTMLInputElement>) {
+    //     const newHost = e.target.value;
+    //     console.log(newHost)
+    //     setRule(prevState => ({
+    //         ...prevState,
+    //         Destination: {
+    //             ...prevState.Destination,
+    //             host: newHost
+    //         }
+    //     }));
+    //     console.log(rule);
+    // }
+
+    function updateLb(lb: LoadBalancer) {
+        setRule(prevState => ({
+            ...prevState,
+            LoadBalancer: lb
+        }))
+    }
+
+    function updateTargets(targets: Address[]) {
+        const updatedRule = rule
+        updatedRule.Targets = targets
+        setRule(updatedRule)
+    }
+
+    function apply() {
+        console.log(proxyRule);
+        if(rule.id === "") {
+            createProxyRule(rule)
             .then(response => {
                 console.log(response);
+                toast.success("Rule created!", {
+                    className: "toast-message"
+                })  
             })
         } else {
-            updateProxyRule(proxyRule)
+            updateProxyRule(rule)
             .then(response => {
                 console.log(response);
+                toast.success("Rule updated!", {
+                    // className: "toast-message-1",
+                    // bodyClassName: "toast-message",
+                    // progressClassName: "toast-message-1"
+                })
             })
         }
     }
@@ -46,9 +97,22 @@ const AccordionItem: React.FC<Props> = ({ proxyRule,  proxyRuleIdx, deleteProxyR
     function getAccordionHeader() {
         return (
             <div className="accordion-title">
-                <input className="accordion-title__service-name" type="text" value={rule.Destination.host} onChange={updateDestination}/>
+
+                {/* <div className="accordion-title__source"> */}
+                    {/* <input className="accordion-title__service-name" type="text" value={rule.Destination.host} onChange={updateDestinationHost} required/>
+                    {/* <input className="accordion-title__service-port" type="number" value={rule.Destination.port} onChange={updateDestinationPort} min="1" max="65535" required/> */}
+                {/* </div> */}
+                <div className="accordion-title__source">
+                    <div className="accordion-title__source__wrapper">
+                        <input className='accordion-title__source__wrapper__input--left' type="text" value={rule.Destination.host} onChange={updateDestinationHost} required/>
+                        <input className='accordion-title__source__wrapper__input--right' type="number" value={rule.Destination.port} onChange={updateDestinationPort} min="1" max="65535" required/>
+                    </div>
+                </div>
                 <div className="accordion-title__info-icon">
                     <img width="35" height="35" src="https://img.icons8.com/ios/50/FFFFFF/info--v1.png" alt="info--v1"/>
+                    <div className="tooltip">
+                        Request source in the form of $URL:$PORT, such as google.com:80
+                    </div>
                 </div>
                 <div className="accordion-title__active-targets">
                     <p className="accordion-title__targets-info">2/3</p>
@@ -75,25 +139,28 @@ const AccordionItem: React.FC<Props> = ({ proxyRule,  proxyRuleIdx, deleteProxyR
                     <ProxyHeaders/>
                 </div>
                 <div className="accordion-content__column">
-                    <ProxyTargets proxyTargets={proxyRule.Targets}/>
+                    <ProxyTargets proxyTargets={proxyRule.Targets} updateTargets={updateTargets}/>
                 </div>
 
                 <div className="accordion-content__column">
-                    <ProxyLoadBalancers loadBalancer={proxyRule.LoadBalancer}/>
-                    <button className="accordion-content__button--cancel" onClick={() => setIsActive(false)}>Cancel</button>  
-                    <button className="accordion-content__button--apply" onClick={() => apply(proxyRule)}>Apply</button>
+                    <ProxyLoadBalancers loadBalancer={proxyRule.LoadBalancer} updateProxyLb={updateLb}/>
+                    <button className="accordion-content__button--cancel" onClick={() => setIsActive(false)}>Cancel</button> 
+                    <button className="accordion-content__button--apply">Apply</button>
                 </div>
             </div> 
         )
     }
 
     return (
-        <div>
-            { 
-                getAccordionHeader() 
-            }
-            { isActive && getAccordionContent(proxyRule) }
-        </div>
+        <Form onSubmit={() => apply()}>
+            <div>
+                <ToastContainer theme="dark" autoClose={1000}/>
+                { 
+                    getAccordionHeader() 
+                }
+                { isActive && getAccordionContent(proxyRule) }
+            </div>
+        </Form>
     )
 }
 

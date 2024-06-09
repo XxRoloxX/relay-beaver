@@ -13,13 +13,21 @@
   }
 
   &__new-btn {
-    float: right;
-    margin-top: 15px;
-    margin-right: 15%;
+    // position: absolute;
+    // right: 0;
+    // bottom: 0;
+    // float: right;
+    // margin-top: 15px;
+    position: relative;
+    right: -90%;
+    margin-top: 20px;
+    // left: 15;
+    // margin-right: 15%;
     background-color: $accent;
   }
 
   h1 {
+    margin-top: 30px;
     text-align: center;
   }
 }

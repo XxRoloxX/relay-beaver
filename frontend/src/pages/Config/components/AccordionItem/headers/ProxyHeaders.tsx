@@ -25,7 +25,7 @@ const ProxyHeaders = () => {
                         <div>
                             <div className="grid-item">Name</div>
                             {
-                                headers.map((header) => {
+                                headers?.map((header) => {
                                     return <input className="input-left" value={header.name}/>
                                 })
                             }
@@ -48,7 +48,6 @@ const ProxyHeaders = () => {
                             }
                         </div>
                     </div>
-
                     <button className="proxy-headers__add-btn" onClick={addHeader}>+</button>
                 </div>
             </div>
