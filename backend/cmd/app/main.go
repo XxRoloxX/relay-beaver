@@ -33,8 +33,9 @@ func main() {
 
 	proxyEventsRouter := proxyevent.GetProxyEventsRouter(connectionHub, router.PathPrefix("/proxy-events").Subrouter())
 	proxyEventsRouter.Use(authMiddleware.Handler)
+
 	loadbalancer.GetLBRouter(router.PathPrefix("/lb").Subrouter())
-	//lbRouter.Use(authMiddleware.Handler)
+	// lbRouter.Use(authMiddleware.Handler)
 
 	clientEventsRouter := clientevent.GetClientEventsRouter(connectionHub, router.PathPrefix("/client-events").Subrouter())
 	clientEventsRouter.Use(authMiddleware.Handler)
