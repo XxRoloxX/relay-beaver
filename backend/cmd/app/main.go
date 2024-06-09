@@ -7,6 +7,7 @@ import (
 	"backend/internal/logger"
 	proxyevent "backend/internal/proxy_event"
 	proxyrule "backend/internal/proxy_rule"
+	"backend/internal/stats"
 	connectionpool "backend/pkg/connection_pool"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -32,6 +33,9 @@ func main() {
 
 	clientEventsRouter := clientevent.GetClientEventsRouter(connectionHub, router.PathPrefix("/client-events").Subrouter())
 	clientEventsRouter.Use(authMiddleware.Handler)
+
+	_ = stats.GetStatsRouter(router.PathPrefix("/stats").Subrouter())
+	// statsRouter.Use(authMiddleware.Handler)
 
 	http.ListenAndServe(":8080", common.HandleCors(router))
 }

@@ -18,6 +18,7 @@ type RequestRepository interface {
 	FindAll() ([]models.ProxiedRequest, error)
 	Update(id string, request models.ProxiedRequest) error
 	Delete(id string) error
+	FindAllByHost(host string) ([]models.ProxiedRequest, error)
 }
 
 type RequestMongoRepository struct {
@@ -38,6 +39,27 @@ func (repo RequestMongoRepository) Create(request models.ProxiedRequest) (models
 	request.Id = res.InsertedID.(primitive.ObjectID).Hex()
 
 	return request, nil
+}
+
+func (repo RequestMongoRepository) FindAllByHost(host string) ([]models.ProxiedRequest, error) {
+	res, err := repo.getRequestsCollection().Find(context.TODO(),
+		bson.M{"request.headers": bson.M{"$elemMatch": bson.M{"key": "Host", "value": host}}})
+
+	if err != nil {
+		return nil, err
+	}
+
+	var requests []models.ProxiedRequest
+	for res.Next(context.Background()) {
+		var request models.ProxiedRequest
+		err := res.Decode(&request)
+		if err != nil {
+			return nil, err
+		}
+		requests = append(requests, request)
+	}
+
+	return requests, nil
 }
 
 func (repo RequestMongoRepository) FindById(id string) (models.ProxiedRequest, error) {
