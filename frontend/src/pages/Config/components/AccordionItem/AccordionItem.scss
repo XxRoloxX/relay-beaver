@@ -56,7 +56,7 @@
         outline: none;
         height: 100%;
         width: 55%;
-        margin-left: 5px;
+        margin-left: 15px;
         background-color: $tertiary;
       }
 
@@ -99,7 +99,7 @@
     text-align: right;
 
     p {
-      margin-top: 15px;
+      margin-top: 13px;
     }
 
     &__status-indicator {
@@ -149,40 +149,38 @@
 }
 
 .tooltip {
-  visibility: hidden; /* Initially hide the tooltip */
-  width: 250px; /* Adjust the width as needed */
-  background-color: black; /* Tooltip background color */
-  color: #fff; /* Tooltip text color */
-  text-align: center; /* Center the text */
-  border-radius: 5px; /* Rounded corners */
-  padding: 5px 0; /* Padding inside the tooltip */
+  visibility: hidden;
+  width: 250px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 0;
   
-  /* Positioning */
-  position: absolute; /* Absolute positioning relative to the parent */
-  z-index: 1; /* Ensures the tooltip appears above other elements */
-  top: 100%; /* Position below the parent element */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Center the tooltip horizontally */
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
   
-  /* Tooltip arrow */
-  opacity: 0; /* Initially hide the tooltip */
-  transition: opacity 0.3s; /* Smooth transition effect */
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .tooltip::after {
   content: "";
   position: absolute;
-  top: -5px; /* Position arrow at the top */
-  left: 50%; /* Center horizontally */
-  transform: translateX(-50%); /* Center the arrow horizontally */
-  border-width: 5px; /* Size of the arrow */
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
   border-style: solid;
-  border-color: transparent transparent black transparent; /* Arrow color */
+  border-color: transparent transparent black transparent;
 }
 
 .accordion-title__info-icon:hover .tooltip {
-  visibility: visible; /* Show the tooltip on hover */
-  opacity: 1; /* Make the tooltip opaque */
+  visibility: visible;
+  opacity: 1;
 }
 
 
@@ -246,13 +244,10 @@
     margin: auto;
     width: 85%;
   }
-
-
 }
 
 .toast-message {
   background-color: $secondary;
-  // color: $accent;
   margin-bottom: 10px;
 }
 

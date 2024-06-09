@@ -21,7 +21,7 @@ const Config = () => {
   }, []);
 
   function newProxyRule() {
-    setProxyRules([...proxyRules, {id: "", Destination: {host: "", port: 0}, Targets: [], LoadBalancer: {Name: ""}}])
+    setProxyRules([...proxyRules, {id: "", host: "google.com", targets: [], headers: [], load_balancer: {Name: "round robin", Params: new Map()}}])
   }
 
   function deleteRule(idx: number, id: string) {

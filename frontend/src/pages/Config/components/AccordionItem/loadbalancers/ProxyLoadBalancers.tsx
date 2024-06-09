@@ -23,7 +23,7 @@ const ProxyLoadBalancers: React.FC<Props> = ({ loadBalancer, updateProxyLb }) =>
         <div>
             <h3 className="lb-header">Load Balancer</h3>
             <div className="load-balancers">
-                <select className="load-balancers__config" onChange={updateLb} value={lb.Name}>
+                <select className="load-balancers__config" onChange={updateLb} value={lb?.Name}>
                     <option value="round robin">round robin</option>
                     <option value="least connections">least connections</option>
                 </select>

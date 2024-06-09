@@ -24,11 +24,13 @@
 
     &__add-btn {
       position: absolute;
-      background-color: $accent;
-      color: black;
+      background-color: transparent;
+      color: $accent;
       bottom: 0;
       right: 0;
-      margin: 5%;
+      margin: -2%;
+      font-size: 30px;
+      border: none;
     }
 }
 
@@ -46,7 +48,12 @@
   width: 90%;
   margin-left: 10px;
   padding: 10px;
-  height: 25px;
+  height: 20px;
+}
+
+#wrapper {
+  max-height: 260px;
+  overflow: scroll;
 }
 
 .trash-icon {
@@ -79,7 +86,7 @@
 }
 
 .separator {
-    border-right: 1px solid #ccc;
-    margin-top: 10px;
-    height: 280px;
+  border-right: 1px solid #ccc;
+  margin-top: 10px;
+  height: 280px;
 }

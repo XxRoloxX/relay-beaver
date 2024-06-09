@@ -1,8 +1,7 @@
 import { getProxyRules } from "../../api/proxyApi"
 
-// TODO -> fix
 export type Header = {
-    name: string
+    key: string
     value: string
 }
 
@@ -13,13 +12,15 @@ export type Address = {
 
 export type LoadBalancer = {
     Name: string
+    Params: Map<String, String>
 }
 
 export type ProxyRule = {
     id: string
-    Destination: Address
-    Targets: Address[]
-    LoadBalancer: LoadBalancer
+    host: string
+    targets: Address[]
+    headers: Header[]
+    load_balancer: LoadBalancer
 }
 
 export const fetchProxyRules = async () => {
