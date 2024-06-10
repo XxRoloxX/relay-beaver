@@ -25,8 +25,8 @@ func main() {
 
 	_ = auth.GetAuthRouter(router.PathPrefix("/auth").Subrouter())
 
-	_ = proxyrule.GetProxyRuleRouter(router.PathPrefix("/proxy-rules").Subrouter())
-	// proxyRuleRouter.Use(authMiddleware.Handler)
+	proxyRuleRouter := proxyrule.GetProxyRuleRouter(router.PathPrefix("/proxy-rules").Subrouter())
+	proxyRuleRouter.Use(authMiddleware.Handler)
 
 	proxyEventsRouter := proxyevent.GetProxyEventsRouter(connectionHub, router.PathPrefix("/proxy-events").Subrouter())
 	proxyEventsRouter.Use(authMiddleware.Handler)
@@ -34,8 +34,8 @@ func main() {
 	clientEventsRouter := clientevent.GetClientEventsRouter(connectionHub, router.PathPrefix("/client-events").Subrouter())
 	clientEventsRouter.Use(authMiddleware.Handler)
 
-	_ = stats.GetStatsRouter(router.PathPrefix("/stats").Subrouter())
-	// statsRouter.Use(authMiddleware.Handler)
+	statsRouter := stats.GetStatsRouter(router.PathPrefix("/stats").Subrouter())
+	statsRouter.Use(authMiddleware.Handler)
 
 	http.ListenAndServe(":8080", common.HandleCors(router))
 }

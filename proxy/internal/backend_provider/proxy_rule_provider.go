@@ -13,8 +13,6 @@ func getProxyRuleEntriesFromApi() map[string]proxyruleentry.ProxyRuleEntry {
 	proxyClient := api.NewProxyBackendClient()
 	proxyRules, err := proxyClient.GetProxyRules()
 
-	println(fmt.Sprintf("proxy rules: %+v", proxyRules))
-
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("error fetching proxy rules: %s", err.Error()))
 		panic(err)
