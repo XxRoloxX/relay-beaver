@@ -1,4 +1,3 @@
-// import { LinearScale, TimeScale } from "chart.js";
 import { Line } from "react-chartjs-2";
 import "chartjs-adapter-moment";
 import { useState } from "react";
@@ -11,6 +10,8 @@ interface TimeSeriesChartProps {
   title: string;
   from?: number; // Unix timestamp
   to?: number; // Unix timestamp
+  color: string;
+  backgroundColor: string;
 }
 
 export interface TimeSeriesData {
@@ -45,7 +46,7 @@ export const getChartOptions = (
       },
       ticks: {
         color: "white",
-        maxTicksLimit: 2,
+        maxTicksLimit: 5,
       },
       min: from,
       max: to,
@@ -74,6 +75,8 @@ export const TimeSeriesChart = ({
   to,
   legend,
   title,
+  color,
+  backgroundColor,
 }: TimeSeriesChartProps) => {
   const [chartData] = useState({
     labels: [],
@@ -85,8 +88,8 @@ export const TimeSeriesChart = ({
           y: d.value,
         })),
         fill: true,
-        borderColor: "rgb(255, 0, 0)",
-        backgroundColor: "rgb(150, 0, 0)",
+        borderColor: color,
+        backgroundColor: backgroundColor,
         tension: 0.1,
       },
     ],

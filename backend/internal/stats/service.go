@@ -3,6 +3,7 @@ package stats
 import (
 	"backend/internal/request"
 	"backend/pkg/models"
+	"slices"
 	"time"
 )
 
@@ -34,7 +35,7 @@ func (service StatsService) GetDefaultTo() int {
 	return int(time.Now().Unix())
 }
 func (service StatsService) GetDefaultInterval() int {
-	return 5
+	return 3600
 }
 
 func (service StatsService) ConvertMapCountToStatsEntry(data map[int]int) []StatisticEntry {
@@ -86,6 +87,18 @@ func (service StatsService) GetHostStats(host string, from int, to int, interval
 	}
 
 	return hostStats
+}
+func (service StatsService) GetHosts() []string {
+	proxiedRequests, _ := service.Repo.FindAll()
+	hosts := make([]string, 0)
+
+	for _, proxiedRequest := range proxiedRequests {
+		host := proxiedRequest.Host()
+		if !slices.Contains(hosts, host) {
+			hosts = append(hosts, host)
+		}
+	}
+	return hosts
 }
 
 /*

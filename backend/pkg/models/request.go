@@ -40,6 +40,15 @@ type ProxiedRequest struct {
 	EndTime   int      `bson:"endTime" json:"endTime"`     // End time as Unix timestamp
 }
 
+func (r ProxiedRequest) Host() string {
+	for _, header := range r.Request.Headers {
+		if header.Key == "Host" {
+			return header.Value
+		}
+	}
+	return ""
+}
+
 func (r ProxiedRequest) Timestamp() int {
 	return r.StartTime
 }

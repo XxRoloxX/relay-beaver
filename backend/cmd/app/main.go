@@ -25,8 +25,8 @@ func main() {
 
 	_ = auth.GetAuthRouter(router.PathPrefix("/auth").Subrouter())
 
-	proxyRuleRouter := proxyrule.GetProxyRuleRouter(router.PathPrefix("/proxy-rules").Subrouter())
-	proxyRuleRouter.Use(authMiddleware.Handler)
+	_ = proxyrule.GetProxyRuleRouter(router.PathPrefix("/proxy-rules").Subrouter())
+	// proxyRuleRouter.Use(authMiddleware.Handler)
 
 	proxyEventsRouter := proxyevent.GetProxyEventsRouter(connectionHub, router.PathPrefix("/proxy-events").Subrouter())
 	proxyEventsRouter.Use(authMiddleware.Handler)

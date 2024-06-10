@@ -6,7 +6,8 @@ func GetStatsRouter(router *mux.Router) *mux.Router {
 
 	statsHandler := NewStatsHandler()
 
-	router.HandleFunc("", statsHandler.GetStats).Methods("GET")
+	router.HandleFunc("", statsHandler.GetStatsHandler).Methods("GET")
+	router.HandleFunc("/hosts", statsHandler.GetHostsHandler).Methods("GET")
 
 	return router
 }

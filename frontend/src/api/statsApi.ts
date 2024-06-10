@@ -49,3 +49,8 @@ export const getHostStats = async (
   );
   return tryParseAsHostStats(response.data);
 };
+
+export const getHosts = async () => {
+  const response = await proxyAxios.get("/stats/hosts");
+  return response.data as string[];
+};

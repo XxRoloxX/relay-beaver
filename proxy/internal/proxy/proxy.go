@@ -160,8 +160,9 @@ func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
 	if host == "" {
 		return "", "", fmt.Errorf("no host header found")
 	}
-
+	println(host)
 	proxyRule := p.provider.GetProxyRuleEntry(host)
+	println(fmt.Sprintf("proxy rule: %+v", proxyRule))
 	proxyTarget := proxyRule.GetProxyTarget()
 	requestMessage.SetHeader("Host", proxyTarget.GetURL())
 

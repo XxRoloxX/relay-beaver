@@ -1,0 +1,85 @@
+@import "@/variables.scss";
+
+.host-selector {
+  background-color: $quaternary;
+  margin-top: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  border-radius: 4rem;
+  border-style: solid;
+  border-width: 1px;
+  transition: border-color 0.2s;
+  border-color: $primary;
+
+  &:hover {
+    border-color: $accent;
+    cursor: pointer;
+    border-width: 2px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.host-popup {
+  position: absolute;
+  background-color: $quaternary;
+  border-radius: 1rem;
+  border-style: solid;
+  border-width: 1px;
+  border-color: $accent;
+  left: 50%;
+  padding: 1rem;
+  padding-top: 0rem;
+  padding-left: 2rem;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  z-index: 2;
+  width: 300px;
+  animation: fadeIn 0.3s;
+  top: 30%;
+  transform: translate(-50%, -50%);
+  transition: all 0.2s;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+
+  &__entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    transition: all 0.2s;
+
+    &:hover {
+      cursor: pointer;
+      color: $accent;
+      filter: brightness(1.5);
+    }
+
+    &--selected {
+      @extend .host-popup__entry;
+      color: $accent;
+      filter: brightness(1.5);
+    }
+  }
+}

@@ -31,7 +31,7 @@ func NewStatsHandler() StatsHandler {
 	}
 }
 
-func (h *StatsHandler) GetStats(w http.ResponseWriter, r *http.Request) {
+func (h *StatsHandler) GetStatsHandler(w http.ResponseWriter, r *http.Request) {
 	logger := h.Logger.Request(r)
 	host := r.URL.Query().Get(HOST_QUERY_PARAM)
 
@@ -68,4 +68,22 @@ func (h *StatsHandler) GetStats(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(serialized)
+}
+
+func (h *StatsHandler) GetHostsHandler(w http.ResponseWriter, r *http.Request) {
+	logger := h.Logger.Request(r)
+	hosts := h.Service.GetHosts()
+
+	serialized, error := json.Marshal(hosts)
+
+	if error != nil {
+		logger.Error(fmt.Sprintf("Error serializing hosts: %s", error.Error()))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error serializing hosts"))
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(serialized)
+
 }
