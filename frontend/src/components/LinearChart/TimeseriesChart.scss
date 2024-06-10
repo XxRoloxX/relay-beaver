@@ -1,0 +1,14 @@
+@import "@/variables.scss";
+
+.timeseries-chart {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: $quaternary;
+  padding: 1rem;
+  border-radius: 1rem;
+  border-style: solid;
+  border-width: 1px;
+  border-color: $tertiary;
+}

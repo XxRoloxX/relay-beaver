@@ -11,8 +11,8 @@ type StatsService struct {
 }
 
 type StatisticEntry struct {
-	Timestamp int
-	Value     float64
+	Timestamp int     `json:"timestamp"`
+	Value     float64 `json:"value"`
 }
 
 type HostStats struct {
