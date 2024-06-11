@@ -1,10 +1,13 @@
 package proxy
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"github.com/rs/zerolog/log"
+	"io"
 	"net"
+	"time"
 )
 
 type ConnectionBuffer struct {
@@ -34,29 +37,19 @@ func (c *ConnectionBuffer) Write(content []byte) (int, error) {
 
 func (c *ConnectionBuffer) ReadAll() (string, error) {
 	var buffer bytes.Buffer
+	rdr := bufio.NewWriter(&buffer)
 
-	// TODO -> customize chunk size
-	bytesRead := 1024
-	for bytesRead == 1024 {
-		log.Info().Msg(fmt.Sprintf("BYTES READ: %d", bytesRead))
-		content, read, err := c.readChunkFromBuffer()
-		if err != nil {
-			log.Error().Msg("Cannot read content from buffer due to chunk reading error")
-			return "", err
-		}
-		buffer.Write(content)
-		bytesRead = read
+	err := c.conn.SetReadDeadline(time.Now().Add(500 * time.Millisecond))
+	if err != nil {
+		log.Error().Msg("Error setting read deadline for connection")
+		return "", err
+	}
+
+	b := make([]byte, 10024)
+	_, err = io.CopyBuffer(rdr, c.conn, b)
+	if err != nil {
+		log.Error().Msg("Error copying data from connection buffer")
 	}
 
 	return buffer.String(), nil
-}
-
-func (c *ConnectionBuffer) readChunkFromBuffer() ([]byte, int, error) {
-	buf := make([]byte, 1024)
-	bytesRead, err := c.conn.Read(buf)
-	if err != nil {
-		log.Error().Msg("Error reading content chunk from buffer")
-		return buf, 0, err
-	}
-	return bytes.Trim(buf, "\u0000"), bytesRead, nil
 }

@@ -17,7 +17,7 @@ func (p *ProxyRuleEntry) GetAddedHeaders() []httpmessage.Header {
 	return p.AddedHeaders
 }
 
-func (p *ProxyRuleEntry) GetProxyTarget() target.HostAddress {
+func (p *ProxyRuleEntry) GetProxyTarget() (target.HostAddress, error) {
 	loadBalancer := target.LoadBalancerFactory(p.LoadBalancer)
 	return loadBalancer.NextTarget(p.Targets)
 }

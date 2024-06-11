@@ -34,7 +34,7 @@ const ProxyTargets: React.FC<Props> = ({ proxyTargets, updateTargets }) => {
         const updatedArray = targets.slice()
         updatedArray.splice(idx, 1)
         setTargets(updatedArray)
-        updateTargets(targets);
+        updateTargets(updatedArray);
     }
 
     return (
@@ -61,7 +61,6 @@ const ProxyTargets: React.FC<Props> = ({ proxyTargets, updateTargets }) => {
                 </div>
                 <button className="targets__add-btn" onClick={(e) => newTarget(e)}>+</button>
             </div>
-            {/* <button onClick={(e) => newTarget(e)}>+</button> */}
         </div>
     )
 }
