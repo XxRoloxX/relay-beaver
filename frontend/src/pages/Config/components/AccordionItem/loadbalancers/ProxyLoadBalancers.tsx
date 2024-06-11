@@ -1,4 +1,4 @@
-import { ChangeEvent, ChangeEventHandler, useEffect, useState } from "react"
+import { ChangeEvent, useState } from "react"
 import { LoadBalancer } from "../../../configLogic"
 import "./ProxyLoadBalancers.scss"
 

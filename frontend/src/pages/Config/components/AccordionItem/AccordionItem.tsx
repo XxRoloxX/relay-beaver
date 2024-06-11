@@ -49,22 +49,27 @@ const AccordionItem: React.FC<Props> = ({ proxyRule,  proxyRuleIdx, deleteProxyR
     }
 
     function apply() {
-        console.log(proxyRule);
-        if(rule.id === "") {
-            createProxyRule(rule)
-            .then(response => {
-                console.log(response);
-                toast.success("Rule created!", {
-                    className: "toast-message"
-                })  
+        if(proxyRule.targets.length == 0) {
+            toast.error("Rule has to contain targets!", {
+                className: "toast-message"
             })
         } else {
-            updateProxyRule(rule)
-            .then(response => {
-                console.log(response);
-                toast.success("Rule updated!", {
+            if(rule.id === "") {
+                createProxyRule(rule)
+                .then(response => {
+                    console.log(response);
+                    toast.success("Rule created!", {
+                        className: "toast-message"
+                    })  
                 })
-            })
+            } else {
+                updateProxyRule(rule)
+                .then(response => {
+                    console.log(response);
+                    toast.success("Rule updated!", {
+                    })
+                })
+            }
         }
     }
 
@@ -79,7 +84,7 @@ const AccordionItem: React.FC<Props> = ({ proxyRule,  proxyRuleIdx, deleteProxyR
                 <div className="accordion-title__info-icon">
                     <img width="35" height="35" src="https://img.icons8.com/ios/50/FFFFFF/info--v1.png" alt="info--v1"/>
                     <div className="tooltip">
-                        Request source in the form of $URL:$PORT, such as google.com:80
+                        Request source in the form of $URL, such as google.com
                     </div>
                 </div>
                 <div className="accordion-title__active-targets">
