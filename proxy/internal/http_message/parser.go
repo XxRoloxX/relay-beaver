@@ -27,7 +27,7 @@ func FromString(message string) HttpMessage {
 	for _, header := range HeadersString {
 		headerParts := strings.Split(header, ":")
 		key := headerParts[0]
-		value := strings.Trim(headerParts[1], " ")
+		value := strings.Trim(strings.Trim(headerParts[1], " "), "\r")
 		headers = append(headers, Header{Key: key, Value: value})
 	}
 
@@ -97,11 +97,17 @@ func (m *HttpMessage) IsResponse() bool {
 func (m *HttpMessage) IsRequest() bool {
 	return !m.IsResponse()
 }
+func (m *HttpMessage) GetHost() string {
+	return m.GetHeader("Host")
+}
+func (m *HttpMessage) SetHost(newHost string) {
+	m.SetHeader("Host", newHost)
+}
 
 func (m *HttpMessage) GetHeader(key string) string {
 	for _, header := range m.headers {
 		if header.Key == key {
-			return header.Value
+			return strings.Trim(header.Value, "\r")
 		}
 	}
 	return ""

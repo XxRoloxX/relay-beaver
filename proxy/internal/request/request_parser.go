@@ -2,9 +2,11 @@ package request
 
 import (
 	"fmt"
-	"github.com/rs/zerolog/log"
+	"proxy/internal/env"
 	httpmessage "proxy/internal/http_message"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 type SimpleRequestParser struct {
@@ -23,10 +25,20 @@ type RequestParser interface {
 func NewSimpleRequestParser(requestChannel chan ProxiedRequest) RequestParser {
 	return &SimpleRequestParser{RequestChannel: requestChannel}
 }
+func (p *SimpleRequestParser) appendProxyPort(message httpmessage.HttpMessage) {
+	host := message.GetHost()
+	if len(strings.Split(host, ":")) >= 2 {
+		return
+	}
+
+	message.SetHost(fmt.Sprintf("%s:%d", host, env.GetProxyServerPort()))
+}
 
 func (p *SimpleRequestParser) ParseRequest(requestContent string, responseContent string, target string, startTime int64, endTime int64) {
 	requestHttpMessage := httpmessage.FromString(requestContent)
 	responseHttpMessage := httpmessage.FromString(responseContent)
+
+	p.appendProxyPort(requestHttpMessage)
 
 	proxiedRequest, err := ProxiedRequestFromHttpMessages(
 		&requestHttpMessage,

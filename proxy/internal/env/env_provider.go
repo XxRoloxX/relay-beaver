@@ -52,12 +52,16 @@ func GetProxyBackendPort() int {
 	return port
 }
 
+func GetTargetHeader() string {
+	return getEnv("TARGET_HEADER", "X-Target")
+}
+
 func getPortOrReturnDefault(env string, fallback int) int {
 	portEnv := getEnv(env, "")
 
 	port, err := strconv.Atoi(portEnv)
 	if err != nil {
-		log.Error().Msg(fmt.Sprintf("ENV: %S not found, defaulting to %d", env, fallback))
+		log.Error().Msg(fmt.Sprintf("ENV: %s not found, defaulting to %d", env, fallback))
 		return fallback
 	}
 

@@ -1,12 +1,14 @@
 package proxy
 
 import (
-	"crypto/tls"
+	// "crypto/tls"
 	"fmt"
 	"net"
+	"proxy/internal/env"
 	"proxy/internal/http_message"
 	"proxy/internal/proxy_rule_entry"
 	request2 "proxy/internal/request"
+	"proxy/internal/target"
 	"strings"
 	"time"
 
@@ -57,14 +59,19 @@ func (p *Proxy) Start() error {
 }
 
 func (p *Proxy) listenOnSocket(port int, socket Socket) error {
-	crt, err := tls.LoadX509KeyPair(p.certPath, p.keyPath)
-	if err != nil {
-		log.Error().Msg(fmt.Sprintf("error loading key pair: %s", err))
-		return err
-	}
-
-	config := &tls.Config{Certificates: []tls.Certificate{crt}}
-	ln, err := tls.Listen(socket.String(), fmt.Sprintf(":%d", port), config)
+	// crt, err := tls.LoadX509KeyPair(p.certPath, p.keyPath)
+	// if err != nil {
+	// 	log.Error().Msg(fmt.Sprintf("error loading key pair: %s", err))
+	// 	return err
+	// }
+	//
+	// config := &tls.Config{Certificates: []tls.Certificate{crt}}
+	// ln, err := tls.Listen(socket.String(), fmt.Sprintf(":%d", port), config)
+	// if err != nil {
+	// 	log.Error().Msg(fmt.Sprintf("error binding tcp socket: %s", err))
+	// 	return err
+	// }
+	ln, err := net.Listen(socket.String(), fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("error binding tcp socket: %s", err))
 		return err
@@ -156,13 +163,28 @@ func replaceNewLinesWithCRLF(content string) string {
 func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
 	requestMessage := httpmessage.FromString(request)
 	host := requestMessage.GetHeader("Host")
+	forcedTargetHeader := requestMessage.GetHeader(env.GetTargetHeader())
+
+	println("Host: ", host)
+
+	var proxyTarget target.HostAddress
+	var err error
 
 	if host == "" {
 		return "", "", fmt.Errorf("no host header found")
 	}
 
 	proxyRule := p.provider.GetProxyRuleEntry(host)
-	proxyTarget := proxyRule.GetProxyTarget()
+	proxyTarget = proxyRule.GetProxyTarget()
+
+	if forcedTargetHeader != "" {
+		log.Info().Msg(fmt.Sprintf("Forced target header found: %s", forcedTargetHeader))
+		proxyTarget, err = target.HostAddressFromString(forcedTargetHeader)
+		if err != nil {
+			return "", "", fmt.Errorf("error parsing forced target header: %s", err)
+		}
+	}
+
 	requestMessage.SetHeader("Host", proxyTarget.GetURL())
 
 	return requestMessage.ToString(), proxyTarget.GetURL(), nil
