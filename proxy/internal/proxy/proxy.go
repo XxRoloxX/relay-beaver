@@ -1,7 +1,7 @@
 package proxy
 
 import (
-	// "crypto/tls"
+	"crypto/tls"
 	"fmt"
 	"net"
 	"proxy/internal/env"
@@ -59,19 +59,14 @@ func (p *Proxy) Start() error {
 }
 
 func (p *Proxy) listenOnSocket(port int, socket Socket) error {
-	// crt, err := tls.LoadX509KeyPair(p.certPath, p.keyPath)
-	// if err != nil {
-	// 	log.Error().Msg(fmt.Sprintf("error loading key pair: %s", err))
-	// 	return err
-	// }
-	//
-	// config := &tls.Config{Certificates: []tls.Certificate{crt}}
-	// ln, err := tls.Listen(socket.String(), fmt.Sprintf(":%d", port), config)
-	// if err != nil {
-	// 	log.Error().Msg(fmt.Sprintf("error binding tcp socket: %s", err))
-	// 	return err
-	// }
-	ln, err := net.Listen(socket.String(), fmt.Sprintf(":%d", port))
+	crt, err := tls.LoadX509KeyPair(p.certPath, p.keyPath)
+	if err != nil {
+		log.Error().Msg(fmt.Sprintf("error loading key pair: %s", err))
+		return err
+	}
+
+	config := &tls.Config{Certificates: []tls.Certificate{crt}}
+	ln, err := tls.Listen(socket.String(), fmt.Sprintf(":%d", port), config)
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("error binding tcp socket: %s", err))
 		return err
