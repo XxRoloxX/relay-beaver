@@ -19,7 +19,8 @@ func (r *RoundRobinLoadBalancer) NextTarget(targets []HostAddress) (HostAddress,
 		log.Error().Msg(fmt.Sprintf("Target cannot be selected, no targets to select from: %s", targets))
 		return HostAddress{}, fmt.Errorf("no targets for host")
 	}
-	return targets[r.idx%len(targets)], nil
+	r.idx = (r.idx + 1) % len(targets)
+	return targets[r.idx], nil
 }
 
 type LoadBalancerConfiguration struct {

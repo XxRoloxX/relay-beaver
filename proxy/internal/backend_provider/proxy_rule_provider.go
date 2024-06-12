@@ -5,6 +5,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"proxy/internal/api"
 	"proxy/internal/proxy_rule_entry"
+	"proxy/internal/target"
 	"time"
 )
 
@@ -33,6 +34,7 @@ func getProxyRuleEntriesFromApi() map[string]proxyruleentry.ProxyRuleEntry {
 	}
 
 	for _, rule := range proxyRules {
+		rule.LB = target.LoadBalancerFactory(rule.LoadBalancer)
 		proxyRuleEntries[rule.Host] = rule
 	}
 
