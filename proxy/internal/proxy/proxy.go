@@ -156,7 +156,10 @@ func (p *Proxy) proxy(content string, proxyAddress string) (string, error) {
 		return "", err
 	}
 
-	return replaceNewLinesWithCRLF(response), nil
+	r := httpmessage.FromString(response)
+	r.SetHeader("Cache-Control", "no-cache") // TODO: demo reasons only (show that LB works)
+
+	return replaceNewLinesWithCRLF(r.ToString()), nil
 }
 
 func replaceNewLinesWithCRLF(content string) string {
@@ -164,7 +167,7 @@ func replaceNewLinesWithCRLF(content string) string {
 }
 
 func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
-  requestMessage := httpmessage.FromString(request)
+	requestMessage := httpmessage.FromString(request)
 	host := requestMessage.GetHeader("Host")
 
 	var proxyTarget target.HostAddress
@@ -175,15 +178,15 @@ func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
 	}
 
 	proxyRule := p.provider.GetProxyRuleEntry(host)
-  proxyTarget, err = proxyRule.GetProxyTarget()
-  
+	proxyTarget, err = proxyRule.GetProxyTarget()
+
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("no targets found for host: %s", host))
 		return "", "", err
 	}
-  
-  forcedTargetHeader := requestMessage.GetHeader(env.GetTargetHeader())
-  
+
+	forcedTargetHeader := requestMessage.GetHeader(env.GetTargetHeader())
+
 	if forcedTargetHeader != "" {
 		log.Info().Msg(fmt.Sprintf("Forced target header found: %s", forcedTargetHeader))
 		proxyTarget, err = target.HostAddressFromString(forcedTargetHeader)
@@ -193,6 +196,6 @@ func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
 	}
 
 	requestMessage.SetHeader("Host", proxyTarget.GetURL())
-	
-  return requestMessage.ToString(), proxyTarget.GetURL(), nil
+
+	return requestMessage.ToString(), proxyTarget.GetURL(), nil
 }

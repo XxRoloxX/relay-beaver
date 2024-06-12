@@ -11,6 +11,7 @@ type ProxyRuleEntry struct {
 	Targets      []target.HostAddress             `json:"targets"`
 	AddedHeaders []httpmessage.Header             `json:"headers"`
 	LoadBalancer target.LoadBalancerConfiguration `json:"load_balancer"`
+	LB           target.LoadBalancer              `json:"lb"`
 }
 
 func (p *ProxyRuleEntry) GetAddedHeaders() []httpmessage.Header {
@@ -18,6 +19,5 @@ func (p *ProxyRuleEntry) GetAddedHeaders() []httpmessage.Header {
 }
 
 func (p *ProxyRuleEntry) GetProxyTarget() (target.HostAddress, error) {
-	loadBalancer := target.LoadBalancerFactory(p.LoadBalancer)
-	return loadBalancer.NextTarget(p.Targets)
+	return p.LB.NextTarget(p.Targets)
 }
