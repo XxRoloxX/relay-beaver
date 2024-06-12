@@ -1,0 +1,72 @@
+@import "@/variables.scss";
+
+.table {
+  margin: 0;
+  padding: 0;
+  width: 80%;
+  overflow-y: scroll;
+  height: 60vh;
+
+  @media (max-width: $md) {
+    width: 100%;
+  }
+
+  border-bottom: 1px solid $tertiary;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+
+  &__content {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid $tertiary;
+    width: 100%;
+    background-color: $quaternary;
+    border-collapse: separate;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    margin: auto;
+
+    &__header {
+      text-align: left;
+    }
+
+    th {
+      font-size: 1rem;
+      padding: 0.7rem;
+      border-style: solid;
+      border-color: $accent-light;
+      border-width: 1px;
+      padding-left: 1rem;
+
+      @media (max-width: $md) {
+        padding: 0.5rem;
+        font-size: 1rem;
+      }
+    }
+
+    tbody {}
+
+    th:first-child {
+      border-top-left-radius: 10px;
+    }
+
+    th:last-child {
+      border-top-right-radius: 10px;
+    }
+
+    td {
+      font-size: 1rem;
+      padding: 0.7rem;
+      border-style: solid;
+      border-color: $tertiary;
+      border-width: 1px;
+      padding-left: 1rem;
+      text-align: center;
+
+      @media (max-width: $md) {
+        padding: 0rem;
+        font-size: 1rem;
+      }
+    }
+  }
+}
