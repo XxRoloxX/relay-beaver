@@ -36,10 +36,16 @@
 
 .grid-container {
   display: grid;
-  grid-template-columns: 35% auto 65%;
+  grid-template-columns: 1fr auto 2fr;
   width: 90%;
   height: 90%;
   margin-left: 4px;
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+  }
 }
 
 .grid-item {
