@@ -3,10 +3,11 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"net/http"
 	"proxy/internal/env"
-	"proxy/internal/proxy_rule_entry"
+	proxyruleentry "proxy/internal/proxy_rule_entry"
+
+	"github.com/rs/zerolog/log"
 )
 
 type ProxyBackendClient struct {

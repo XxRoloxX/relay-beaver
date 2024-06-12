@@ -13,11 +13,12 @@ func HandleCors(
 ) http.Handler {
 
 	origins := handlers.AllowedOrigins([]string{os.Getenv("FRONTEND_URL")})
+	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"})
 	headers := handlers.AllowedHeaders([]string{
 		"X-Requested-With",
 		"Content-Type",
 		"Authorization",
 	})
 
-	return handlers.CORS(origins, headers, handlers.AllowCredentials())(router)
+	return handlers.CORS(origins, headers, methods, handlers.AllowCredentials())(router)
 }

@@ -4,16 +4,20 @@ import (
 	"backend/internal/auth"
 	clientevent "backend/internal/client_event"
 	"backend/internal/common"
+	"backend/internal/database"
+	"backend/internal/loadbalancer"
 	"backend/internal/logger"
 	proxyevent "backend/internal/proxy_event"
 	proxyrule "backend/internal/proxy_rule"
 	"backend/internal/stats"
 	connectionpool "backend/pkg/connection_pool"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
+	database.InitializeDatabase()
 	router := mux.NewRouter()
 
 	connectionHub := connectionpool.NewHub()
@@ -30,6 +34,9 @@ func main() {
 
 	proxyEventsRouter := proxyevent.GetProxyEventsRouter(connectionHub, router.PathPrefix("/proxy-events").Subrouter())
 	proxyEventsRouter.Use(authMiddleware.Handler)
+
+	loadbalancer.GetLBRouter(router.PathPrefix("/lb").Subrouter())
+	// lbRouter.Use(authMiddleware.Handler)
 
 	clientEventsRouter := clientevent.GetClientEventsRouter(connectionHub, router.PathPrefix("/client-events").Subrouter())
 	clientEventsRouter.Use(authMiddleware.Handler)

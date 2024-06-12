@@ -3,13 +3,14 @@ package websocket
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/rs/zerolog/log"
 	"net/url"
 	"os"
 	"os/signal"
 	"proxy/internal/env"
 	"proxy/internal/request"
+
+	"github.com/gorilla/websocket"
+	"github.com/rs/zerolog/log"
 )
 
 type WebsocketClient struct {

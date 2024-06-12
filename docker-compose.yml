@@ -88,6 +88,8 @@ services:
     volumes:
       - ./proxy/proxy.crt:${PROXY_CERT_PATH}
       - ./proxy/proxy.key:${PROXY_KEY_PATH}
+    depends_on:
+      - backend
     develop:
       watch:
         - action: rebuild

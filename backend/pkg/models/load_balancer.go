@@ -1,6 +1,7 @@
 package models
 
 type LoadBalancer struct {
-	Name   string
-	Params map[string]string
+	Id     string            `bson:"_id,omitempty" json:"id,omitempty"`
+	Name   string            `bson:"name"`
+	Params map[string]string `bson:"params"`
 }

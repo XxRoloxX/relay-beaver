@@ -2,20 +2,34 @@ package backendprovider
 
 import (
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"proxy/internal/api"
 	"proxy/internal/proxy_rule_entry"
-
-	"github.com/rs/zerolog/log"
+	"time"
 )
 
 func getProxyRuleEntriesFromApi() map[string]proxyruleentry.ProxyRuleEntry {
 	proxyRuleEntries := make(map[string]proxyruleentry.ProxyRuleEntry)
 	proxyClient := api.NewProxyBackendClient()
-	proxyRules, err := proxyClient.GetProxyRules()
 
-	if err != nil {
-		log.Error().Msg(fmt.Sprintf("error fetching proxy rules: %s", err.Error()))
-		panic(err)
+	var proxyRules []proxyruleentry.ProxyRuleEntry
+	retries := 0
+	for {
+		if retries == 5 {
+			panic("cannot fetch proxy rules from backend")
+		}
+
+		rules, err := proxyClient.GetProxyRules()
+		if err != nil {
+			log.Error().Msg(fmt.Sprintf("error fetching proxy rules from backend: %s", err.Error()))
+			log.Info().Msg("sleeping for 1s...")
+			time.Sleep(1 * time.Second)
+			retries++
+		} else {
+			log.Info().Msg("successfully fetched proxy rules from backend")
+			proxyRules = rules
+			break
+		}
 	}
 
 	for _, rule := range proxyRules {
