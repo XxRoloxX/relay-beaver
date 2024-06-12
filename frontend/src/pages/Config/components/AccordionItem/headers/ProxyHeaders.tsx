@@ -43,8 +43,8 @@ const ProxyHeaders: React.FC<Props> = ({ proxyHeaders, updateHeaders}) => {
         <div>
             <h3 className="headers-header">Headers</h3>
             <div className="proxy-headers">
-                <div className="border">
-                    <div className="wrapper">
+                <div className="proxy-headers-border">
+                    <div className="proxy-headers-wrapper">
                         <div className="grid-container">
                             <div>
                                 <div className="grid-item">Name</div>
