@@ -1,0 +1,41 @@
+@import "@/variables.scss";
+
+@mixin corner-curve($px) {
+    border-top-left-radius: $px;
+    border-top-right-radius: $px;
+    border-bottom-left-radius: $px;
+    border-bottom-right-radius: $px;
+}
+
+.lb-header {
+    position: relative;
+    left: 10%;
+}
+
+.load-balancers {
+    @include corner-curve(15px);
+    height: 70px;
+    width: 80%;
+    margin: auto;
+    background-color: $tertiary;
+    border: solid;
+    border: $primary;
+    padding: 2%;
+
+    &__config {
+        @include corner-curve(15px);
+        font-size: 15px;
+        border: solid;
+        border-color: $secondary;
+        width: 70%;
+        height: 60%;
+        background-color: $quaternary;
+        padding: 6px;
+        margin-left: 10px;
+        margin-top: 10px;
+    }
+
+    p {
+        display: inline-block;
+    }
+}

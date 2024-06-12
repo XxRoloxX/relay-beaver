@@ -1,7 +1,6 @@
 package proxy
 
 import (
-	"crypto/tls"
 	"fmt"
 	"net"
 	"proxy/internal/env"
@@ -59,14 +58,17 @@ func (p *Proxy) Start() error {
 }
 
 func (p *Proxy) listenOnSocket(port int, socket Socket) error {
-	crt, err := tls.LoadX509KeyPair(p.certPath, p.keyPath)
-	if err != nil {
-		log.Error().Msg(fmt.Sprintf("error loading key pair: %s", err))
-		return err
-	}
+	// TODO - maybe stick to no TLS for dev phase? - quite out of scope of the project
+	//crt, err := tls.LoadX509KeyPair(p.certPath, p.keyPath)
+	//if err != nil {
+	//	log.Error().Msg(fmt.Sprintf("error loading key pair: %s", err))
+	//return err
+	//}
 
-	config := &tls.Config{Certificates: []tls.Certificate{crt}}
-	ln, err := tls.Listen(socket.String(), fmt.Sprintf(":%d", port), config)
+	//config := &tls.Config{Certificates: []tls.Certificate{crt}}
+	//ln, err := tls.Listen(socket.String(), fmt.Sprintf(":%d", port), config)
+
+	ln, err := net.Listen(socket.String(), fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("error binding tcp socket: %s", err))
 		return err
@@ -97,36 +99,42 @@ func (p *Proxy) handleConnection(buffer ConnectionBuffer) {
 		return
 	}
 
-	startTime := time.Now().Unix()
+	if request != "" {
+		startTime := time.Now().Unix()
 
-	req, proxyAddress, err := p.parseHttpRequest(request)
-	if err != nil {
-		log.Error().Msg(fmt.Sprintf("error parsing request %s", err))
+		req, proxyAddress, err := p.parseHttpRequest(request)
+		if err != nil {
+			log.Error().Msg(fmt.Sprintf("error parsing request %s", err))
+			return
+		}
+
+		response, err := p.proxy(req, proxyAddress)
+		if err != nil {
+			log.Error().Msg(fmt.Sprintf("failed proxying to destination: %s, error: %s", proxyAddress, err))
+			return
+		}
+		endTime := time.Now().Unix()
+
+		go p.parser.ParseRequest(request, response, proxyAddress, startTime, endTime)
+
+		bytesWritten, err := buffer.Write([]byte(response))
+
+		if err != nil {
+			log.Error().Msg(fmt.Sprintf("error writing response from destination %s, error: %s", proxyAddress, err))
+			return
+		}
+
+		log.Info().Msg(fmt.Sprintf("successfuly wrote %d bytes from response", bytesWritten))
 		return
+	} else {
+		badRequest := "HTTP/1.1 400 Bad Request\r\n\r\n"
+		buffer.conn.Write([]byte(badRequest))
 	}
-
-	response, err := p.proxy(req, proxyAddress)
-	if err != nil {
-		log.Error().Msg(fmt.Sprintf("failed proxying to destination: %s, error: %s", proxyAddress, err))
-		return
-	}
-	endTime := time.Now().Unix()
-
-	go p.parser.ParseRequest(request, response, proxyAddress, startTime, endTime)
-
-	bytesWritten, err := buffer.Write([]byte(response))
-
-	if err != nil {
-		log.Error().Msg(fmt.Sprintf("error writing response from destination %s, error: %s", proxyAddress, err))
-		return
-	}
-
-	log.Info().Msg(fmt.Sprintf("successfuly wrote %d bytes from response", bytesWritten))
-	return
 }
 
 func (p *Proxy) proxy(content string, proxyAddress string) (string, error) {
 	conn, err := net.Dial("tcp", proxyAddress)
+	defer conn.Close()
 
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("Error establishing TCP connection with %s", proxyAddress))
@@ -156,11 +164,8 @@ func replaceNewLinesWithCRLF(content string) string {
 }
 
 func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
-	requestMessage := httpmessage.FromString(request)
+  requestMessage := httpmessage.FromString(request)
 	host := requestMessage.GetHeader("Host")
-	forcedTargetHeader := requestMessage.GetHeader(env.GetTargetHeader())
-
-	println("Host: ", host)
 
 	var proxyTarget target.HostAddress
 	var err error
@@ -170,8 +175,15 @@ func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
 	}
 
 	proxyRule := p.provider.GetProxyRuleEntry(host)
-	proxyTarget = proxyRule.GetProxyTarget()
-
+  proxyTarget, err = proxyRule.GetProxyTarget()
+  
+	if err != nil {
+		log.Error().Msg(fmt.Sprintf("no targets found for host: %s", host))
+		return "", "", err
+	}
+  
+  forcedTargetHeader := requestMessage.GetHeader(env.GetTargetHeader())
+  
 	if forcedTargetHeader != "" {
 		log.Info().Msg(fmt.Sprintf("Forced target header found: %s", forcedTargetHeader))
 		proxyTarget, err = target.HostAddressFromString(forcedTargetHeader)
@@ -181,6 +193,6 @@ func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
 	}
 
 	requestMessage.SetHeader("Host", proxyTarget.GetURL())
-
-	return requestMessage.ToString(), proxyTarget.GetURL(), nil
+	
+  return requestMessage.ToString(), proxyTarget.GetURL(), nil
 }

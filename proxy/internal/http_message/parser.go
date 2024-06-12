@@ -23,11 +23,14 @@ func FromString(message string) HttpMessage {
 	requestLineAndHeaders, body := messagePartsArray[0], messagePartsArray[1]
 	requestLineAndHeadersPartsArray := strings.Split(requestLineAndHeaders, "\n")
 	requestLine, HeadersString := requestLineAndHeadersPartsArray[0], requestLineAndHeadersPartsArray[1:]
+	requestLine = strings.Replace(requestLine, "\r", "", 1)
 	headers := make([]Header, 0)
 	for _, header := range HeadersString {
+		header = strings.Replace(header, "\r", "", 1)
 		headerParts := strings.Split(header, ":")
 		key := headerParts[0]
-		value := strings.Trim(strings.Trim(headerParts[1], " "), "\r")
+		v := strings.Join(headerParts[1:], ":")
+		value := strings.Trim(v, " ")
 		headers = append(headers, Header{Key: key, Value: value})
 	}
 

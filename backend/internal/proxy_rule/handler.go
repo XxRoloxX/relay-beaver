@@ -34,8 +34,11 @@ func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	serialized, error := json.Marshal(requests)
+	if len(requests) == 0 {
+		requests = make([]models.ProxyRule, 0)
+	}
 
+	serialized, error := json.Marshal(requests)
 	if error != nil {
 		common.LogInternalServerError(w, logger, error)
 		return
@@ -43,7 +46,6 @@ func (h *ProxyRuleHandler) GetProxyRuleHandler(w http.ResponseWriter, r *http.Re
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(serialized)
-
 }
 
 func (h *ProxyRuleHandler) CreateProxyRuleHandler(w http.ResponseWriter, r *http.Request) {
