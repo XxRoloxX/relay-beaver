@@ -17,6 +17,24 @@
     text-align: center;
     justify-content: center;
     align-items: center;
+
+    &__host {
+      background-color: $quaternary;
+      margin-top: 2rem;
+      padding-left: 2rem;
+      padding-right: 2rem;
+      border-radius: 4rem;
+      border-style: solid;
+      border-width: 1px;
+      transition: border-color 0.2s;
+      border-color: $primary;
+
+      &:hover {
+        border-color: $accent;
+        cursor: pointer;
+        border-width: 2px;
+      }
+    }
   }
 
   &__charts {

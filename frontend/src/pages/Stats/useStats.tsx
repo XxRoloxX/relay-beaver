@@ -25,7 +25,7 @@ const useStats = () => {
   const [hosts, setHosts] = useState<string[]>([]);
   const [host, setHost] = useState<string | null>(null);
   const [stats, setStats] = useState<HostStatsTimeSeries | null>(null);
-  const [showHosts, setShowHosts] = useState(true);
+  const [showHosts, setShowHosts] = useState(false);
 
   const fetchStats = useCallback(async () => {
     try {

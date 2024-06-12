@@ -1,3 +1,5 @@
+import axios from "axios";
+
 interface Request {
   method: string;
   protocol: string;
@@ -10,6 +12,18 @@ interface Header {
   key: string;
   value: string;
 }
+
+//TODO: In case of redoing requests on the frontend
+// const FORBIDDEN_HEADERS = [
+//   "Host",
+//   "Accept-Encoding",
+//   "Connection",
+//   "Access-Control-Request-Headers",
+//   "Access-Control-Request-Method",
+//   "Referer",
+//   "Origin",
+//   "DNT",
+// ];
 
 function isRequest(obj: unknown): obj is Request {
   if (typeof obj !== "object" || obj === null) return false;
@@ -77,6 +91,25 @@ export class ProxiedRequest {
     }
 
     return "";
+  }
+  //TODO: Move whole redoRequest functionality to the backend
+  public redoRequest() {
+    const preparedObject = {
+      method: this.request.method,
+      url: `http://${this.getHost() + this.request.path}`,
+      // headers: this.request.headers.reduce(
+      //   (acc, header) => {
+      //     if (FORBIDDEN_HEADERS.includes(header.key)) return acc;
+      //     acc[header.key] = header.value;
+      //     return acc;
+      //   },
+      //   {} as Record<string, string>,
+      // ),
+      data: this.request.body,
+    };
+    axios(preparedObject).catch((err) => {
+      console.log("error", err);
+    });
   }
 
   public static fromIProxiedRequest(request: IProxiedRequest): ProxiedRequest {
@@ -173,6 +206,7 @@ export function tryParseProxiedRequest(json: string): ProxiedRequest {
   if (typeof json !== "string") {
     throw new Error("ProxiedRequest JSON is not a string");
   }
+  console.log(json);
 
   const rawObject = JSON.parse(json);
 

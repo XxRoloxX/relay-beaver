@@ -11,6 +11,7 @@ import useStats, {
 } from "./useStats";
 import { HostSelector } from "./components/HostSelector/HostSelector";
 import Shadow from "../../components/Shadow/Shadow";
+import Popup from "../../components/Popup/Popup";
 
 const STATS_CHARTS = [
   {
@@ -66,10 +67,10 @@ const Stats = () => {
   const getPolarChartData = useCallback(() => {
     const formatedData: PolarChartEntry[] = stats
       ? POLAR_CHART_STATS.map((stat) => ({
-          color: stat.color,
-          label: stat.label,
-          value: stat.accumulatorFn(stats),
-        }))
+        color: stat.color,
+        label: stat.label,
+        value: stat.accumulatorFn(stats),
+      }))
       : [];
     return formatedData;
   }, [stats]);
@@ -77,13 +78,12 @@ const Stats = () => {
   return (
     <div className="stats">
       <div className="stats__header">
-        <HostSelector
-          showHosts={showHosts}
-          setShowHosts={setShowHosts}
-          host={host}
-          hosts={hosts}
-          setHost={setHost}
-        />
+        <h2 className="stats__header__host" onClick={() => setShowHosts(true)}>
+          {host}
+        </h2>
+        <Popup isDisplayed={showHosts} setIsDisplayed={setShowHosts}>
+          <HostSelector host={host} hosts={hosts} setHost={setHost} />
+        </Popup>
       </div>
       <div className="stats__charts--small">
         {stats &&

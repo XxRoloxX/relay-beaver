@@ -83,10 +83,12 @@ export const TimeSeriesChart = ({
     datasets: [
       {
         label: legend,
-        data: data.map((d) => ({
-          x: d.timestamp,
-          y: d.value,
-        })),
+        data: data
+          .sort((a, b) => a.timestamp - b.timestamp)
+          .map((d) => ({
+            x: d.timestamp,
+            y: d.value,
+          })),
         fill: true,
         borderColor: color,
         backgroundColor: backgroundColor,
