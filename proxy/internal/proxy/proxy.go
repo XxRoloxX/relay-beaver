@@ -3,9 +3,11 @@ package proxy
 import (
 	"fmt"
 	"net"
+	"proxy/internal/env"
 	"proxy/internal/http_message"
 	"proxy/internal/proxy_rule_entry"
 	request2 "proxy/internal/request"
+	"proxy/internal/target"
 	"strings"
 	"time"
 
@@ -162,20 +164,35 @@ func replaceNewLinesWithCRLF(content string) string {
 }
 
 func (p *Proxy) parseHttpRequest(request string) (string, string, error) {
-	requestMessage := httpmessage.FromString(request)
-	host := strings.Replace(requestMessage.GetHeader("Host"), "\r", "", 1)
+  requestMessage := httpmessage.FromString(request)
+	host := requestMessage.GetHeader("Host")
+
+	var proxyTarget target.HostAddress
+	var err error
 
 	if host == "" {
 		return "", "", fmt.Errorf("no host header found")
 	}
 
 	proxyRule := p.provider.GetProxyRuleEntry(host)
-	proxyTarget, err := proxyRule.GetProxyTarget()
+  proxyTarget, err = proxyRule.GetProxyTarget()
+  
 	if err != nil {
 		log.Error().Msg(fmt.Sprintf("no targets found for host: %s", host))
 		return "", "", err
 	}
-	requestMessage.SetHeader("Host", proxyTarget.GetURL())
+  
+  forcedTargetHeader := requestMessage.GetHeader(env.GetTargetHeader())
+  
+	if forcedTargetHeader != "" {
+		log.Info().Msg(fmt.Sprintf("Forced target header found: %s", forcedTargetHeader))
+		proxyTarget, err = target.HostAddressFromString(forcedTargetHeader)
+		if err != nil {
+			return "", "", fmt.Errorf("error parsing forced target header: %s", err)
+		}
+	}
 
-	return requestMessage.ToString(), proxyTarget.GetURL(), nil
+	requestMessage.SetHeader("Host", proxyTarget.GetURL())
+	
+  return requestMessage.ToString(), proxyTarget.GetURL(), nil
 }

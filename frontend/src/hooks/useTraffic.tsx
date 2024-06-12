@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { ProxiedRequest } from "../api/proxiedRequestApi";
 
+// const mockTraffic = Array.from({ length: 1 }, () => new ProxiedRequest());
+
 const useTraffic = () => {
   const [traffic, setTraffic] = useState<ProxiedRequest[]>([]);
   const [socket, setSocket] = useState<WebSocket | null>(null);

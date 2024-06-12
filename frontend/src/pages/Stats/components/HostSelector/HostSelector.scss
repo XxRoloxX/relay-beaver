@@ -29,28 +29,6 @@
 }
 
 .host-popup {
-  position: absolute;
-  background-color: $quaternary;
-  border-radius: 1rem;
-  border-style: solid;
-  border-width: 1px;
-  border-color: $accent;
-  left: 50%;
-  padding: 1rem;
-  padding-top: 0rem;
-  padding-left: 2rem;
-  cursor: default;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: start;
-  z-index: 2;
-  width: 300px;
-  animation: fadeIn 0.3s;
-  top: 30%;
-  transform: translate(-50%, -50%);
-  transition: all 0.2s;
-
   &:hover {
     filter: brightness(1.1);
   }

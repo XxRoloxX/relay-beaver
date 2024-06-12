@@ -67,9 +67,14 @@ func (handler *ProxyEventsHandler) WebsocketRequestsHandler(w http.ResponseWrite
 		}
 
 		proxiedRequest := eventMessage.ProxiedRequest
-
+		proxiedRequest, err = handler.Service.HandleProxiedRequest(proxiedRequest)
 		encodedProxiedRequest, err := json.Marshal(proxiedRequest)
-		handler.Service.HandleProxiedRequest(proxiedRequest)
+
+		if err != nil {
+			logger.Error(err.Error())
+			return
+		}
+
 		handler.ConnectionHub.Broadcast(encodedProxiedRequest)
 	}
 }

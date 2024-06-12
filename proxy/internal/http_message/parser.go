@@ -100,11 +100,17 @@ func (m *HttpMessage) IsResponse() bool {
 func (m *HttpMessage) IsRequest() bool {
 	return !m.IsResponse()
 }
+func (m *HttpMessage) GetHost() string {
+	return m.GetHeader("Host")
+}
+func (m *HttpMessage) SetHost(newHost string) {
+	m.SetHeader("Host", newHost)
+}
 
 func (m *HttpMessage) GetHeader(key string) string {
 	for _, header := range m.headers {
 		if header.Key == key {
-			return header.Value
+			return strings.Trim(header.Value, "\r")
 		}
 	}
 	return ""

@@ -1,3 +1,5 @@
+import axios from "axios";
+
 interface Request {
   method: string;
   protocol: string;
@@ -77,6 +79,17 @@ export class ProxiedRequest {
     }
 
     return "";
+  }
+  //TODO: Move whole redoRequest functionality to the backend
+  public redoRequest() {
+    const preparedObject = {
+      method: this.request.method,
+      url: `http://${this.getHost() + this.request.path}`,
+      data: this.request.body,
+    };
+    axios(preparedObject).catch((err) => {
+      console.log("error", err);
+    });
   }
 
   public static fromIProxiedRequest(request: IProxiedRequest): ProxiedRequest {
@@ -173,6 +186,7 @@ export function tryParseProxiedRequest(json: string): ProxiedRequest {
   if (typeof json !== "string") {
     throw new Error("ProxiedRequest JSON is not a string");
   }
+  console.log(json);
 
   const rawObject = JSON.parse(json);
 
