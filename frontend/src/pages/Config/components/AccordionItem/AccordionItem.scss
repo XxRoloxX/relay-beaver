@@ -35,7 +35,8 @@
 
   &__source {
     width: 320px;
-    margin-left: 40px;
+    // margin-left: 40px;
+    margin-left: 1rem;
 
     &__wrapper {
       height: 35px;
@@ -85,15 +86,9 @@
     position: relative;
     display: inline-block;
     cursor: pointer;
-    width: 10%;
     margin-left: 10px;
-
-    img {
-      margin-top: 10px;
-    }
   }
-  
-  
+
   &__active-targets {
     width: 60%;
     text-align: right;
@@ -104,7 +99,7 @@
 
     &__status-indicator {
       display: inline-block;
-      background-color: #32CD32;
+      background-color: #32cd32;
       margin-left: 10px;
       margin-right: 10px;
       margin-bottom: -4px;
@@ -115,7 +110,7 @@
       height: 25px;
       width: 25px;
     }
-  }  
+  }
 
   &__open {
     width: 5%;
@@ -129,7 +124,7 @@
       margin-bottom: 10px;
     }
   }
-  
+
   &__delete {
     position: relative;
     width: 5%;
@@ -141,7 +136,7 @@
       margin-top: 21px;
     }
   }
-  
+
   &__targets-info {
     font-size: 25px;
     display: inline-block;
@@ -156,13 +151,13 @@
   text-align: center;
   border-radius: 5px;
   padding: 5px 0;
-  
+
   position: absolute;
   z-index: 1;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  
+
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -178,11 +173,19 @@
   border-color: transparent transparent black transparent;
 }
 
-.accordion-title__info-icon:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
-}
+.accordion-title__info-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
+  &:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
 
 .accordion-title:hover {
   background-color: $primary;
@@ -195,26 +198,51 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 1rem;
 
   &__column {
-    float: left;
-    width: 33.33%;
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex-grow: 1;
+
+    &__row {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+  }
+
+  @media (max-width: $md) {
+    padding: 0rem;
+
+    &__column {
+      padding: 0rem;
+      margin: 0rem;
+    }
   }
 
   &__button--apply {
     position: relative;
     background-color: #0c7a1d;
     width: 150px;
+    height: 40px;
     margin-left: 30px;
   }
-  
+
   &__button--cancel {
     position: relative;
     background-color: $accent;
     width: 150px;
-    margin-top: 47%;
-    margin-left: 40px;
+    height: 40px;
   }
 
   hr {
@@ -241,8 +269,8 @@
 
   .accordion-content__column {
     flex-grow: 1;
-    margin: auto;
-    width: 85%;
+    margin: 1rem;
+    width: 90%;
   }
 }
 
