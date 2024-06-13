@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./AccordionItem.scss";
 import ProxyHeaders from "./headers/ProxyHeaders";
 import ProxyTargets from "./targets/ProxyTargets";
@@ -39,6 +39,10 @@ const AccordionItem: React.FC<Props> = ({
   }
 
   function updateTargets(targets: Address[]) {
+    // setRule((prevState) => ({
+      // ...prevState,
+      // targets: targets
+    // })) 
     const updatedRule = rule;
     updatedRule.targets = targets;
     setRule(updatedRule);
@@ -99,7 +103,7 @@ const AccordionItem: React.FC<Props> = ({
           </div>
         </div>
         <div className="accordion-title__active-targets">
-          <p className="accordion-title__targets-info">2/3</p>
+          <p className="accordion-title__targets-info">2/2</p>
           <div className="accordion-title__active-targets__status-indicator"></div>
         </div>
         <div
@@ -156,7 +160,10 @@ const AccordionItem: React.FC<Props> = ({
               >
                 Cancel
               </button>
-              <button className="accordion-content__button--apply">
+              <button 
+                className="accordion-content__button--apply" 
+                // onClick={() => setIsActive(false)}
+              >
                 Apply
               </button>
             </div>

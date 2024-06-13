@@ -25,16 +25,29 @@ const ProxyTargets: React.FC<Props> = ({ proxyTargets, updateTargets }) => {
 
     function newTarget(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.preventDefault();
-        const newTargets = [...targets, {host: "google.com", port: 80}]
-        setTargets(newTargets)
-        updateTargets(newTargets);
+        setTargets((prev) => {
+            const newTargets = prev.slice();
+            newTargets[newTargets.length] = {host: "google.com", port: 80};
+            updateTargets(newTargets);
+            return newTargets;
+        })
+        // const newTargets = [...targets, {host: "google.com", port: 80}]
+        // setTargets(newTargets)
+        // updateTargets(newTargets);
     }
 
     function deleteTarget(idx: number) {
-        const updatedArray = targets.slice()
-        updatedArray.splice(idx, 1)
-        setTargets(updatedArray)
-        updateTargets(updatedArray);
+        setTargets((prev) => {
+            const updatedArray = prev.slice();
+            updatedArray.splice(idx, 1);
+            // setTargets(updatedArray)
+            updateTargets(updatedArray);
+            return updatedArray;
+        })
+        // const updatedArray = targets.slice()
+        // updatedArray.splice(idx, 1)
+        // setTargets(updatedArray)
+        // updateTargets(updatedArray);
     }
 
     return (

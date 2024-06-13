@@ -12,30 +12,48 @@ const ProxyHeaders: React.FC<Props> = ({ proxyHeaders, updateHeaders }) => {
 
     function addHeader(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.preventDefault();
-        const newHeaders = [...headers, { key: "example", value: "header" }];
-        setHeaders(newHeaders);
-        updateHeaders(newHeaders);
+        setHeaders((prev) => {
+            const newHeaders = prev.slice();
+            newHeaders[newHeaders.length] = { key: "example", value: "header" };
+            updateHeaders(newHeaders);
+            return newHeaders;
+        })
     }
 
     function deleteHeader(idx: number) {
-        const newHeaders = headers.slice();
-        newHeaders.splice(idx, 1);
-        setHeaders(newHeaders);
-        updateHeaders(newHeaders);
+        setHeaders((prev) => {
+            const newHeaders = prev.slice();
+            newHeaders.splice(idx, 1);
+            updateHeaders(newHeaders);
+            return newHeaders
+        })
     }
 
     function setHeaderKey(e: React.ChangeEvent<HTMLInputElement>, idx: number) {
-        const newHeaders = headers.slice();
-        newHeaders[idx].key = e.target.value;
-        setHeaders(newHeaders);
-        updateHeaders(newHeaders);
+        setHeaders((prev) => {
+            const newHeaders = prev.slice();
+            newHeaders[idx].key = e.target.value;
+            updateHeaders(newHeaders);
+            return newHeaders;
+        })
+        // const newHeaders = headers.slice();
+        // newHeaders[idx].key = e.target.value;
+        // setHeaders(newHeaders);
+        // updateHeaders(newHeaders);
     }
 
     function setHeaderValue(e: React.ChangeEvent<HTMLInputElement>, idx: number) {
-        const newHeaders = headers.slice();
-        newHeaders[idx].value = e.target.value;
-        setHeaders(newHeaders);
-        updateHeaders(newHeaders);
+        setHeaders((prev) => {
+            const newHeaders = prev.slice();
+            newHeaders[idx].value = e.target.value;
+            // setHeaders(newHeaders);
+            updateHeaders(newHeaders);
+            return newHeaders;
+        })
+        // const newHeaders = headers.slice();
+        // newHeaders[idx].value = e.target.value;
+        // setHeaders(newHeaders);
+        // updateHeaders(newHeaders);
     }
 
     return (
@@ -60,7 +78,6 @@ const ProxyHeaders: React.FC<Props> = ({ proxyHeaders, updateHeaders }) => {
                             <div className="separator"></div>
                             <div className="grid-container__column">
                                 <div className="grid-item">Value</div>
-                                {/* <div id="test"> */}
                                 {headers.map((header, idx) => {
                                     return (
                                         <div>
@@ -84,7 +101,6 @@ const ProxyHeaders: React.FC<Props> = ({ proxyHeaders, updateHeaders }) => {
                                         </div>
                                     );
                                 })}
-                                {/* </div> */}
                             </div>
                         </div>
                     </div>
