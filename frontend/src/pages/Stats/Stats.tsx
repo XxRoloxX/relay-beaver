@@ -32,7 +32,7 @@ const STATS_CHARTS = [
     title: "Average Latency (s)",
     key: "averageLatency",
     legend: "Average latency (s)",
-    color: "rgba(0,0,255)",
+    color: "rgba(0,0,255,0.6)",
     backgroundColor: "rgba(0,0,200)",
   },
   {
@@ -67,13 +67,18 @@ const Stats = () => {
   const getPolarChartData = useCallback(() => {
     const formatedData: PolarChartEntry[] = stats
       ? POLAR_CHART_STATS.map((stat) => ({
-        color: stat.color,
-        label: stat.label,
-        value: stat.accumulatorFn(stats),
-      }))
+          color: stat.color,
+          label: stat.label,
+          value: stat.accumulatorFn(stats),
+        }))
       : [];
     return formatedData;
   }, [stats]);
+
+  const handleHostSelection = (host: string) => {
+    setHost(host);
+    setShowHosts(false);
+  };
 
   return (
     <div className="stats">
@@ -82,7 +87,11 @@ const Stats = () => {
           {host}
         </h2>
         <Popup isDisplayed={showHosts} setIsDisplayed={setShowHosts}>
-          <HostSelector host={host} hosts={hosts} setHost={setHost} />
+          <HostSelector
+            host={host}
+            hosts={hosts}
+            setHost={handleHostSelection}
+          />
         </Popup>
       </div>
       <div className="stats__charts--small">

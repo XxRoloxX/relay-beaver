@@ -1,7 +1,7 @@
 import { Line } from "react-chartjs-2";
 import "chartjs-adapter-moment";
-import { useState } from "react";
-import { ChartOptions } from "chart.js";
+import { useEffect, useState } from "react";
+import { ChartData, ChartOptions } from "chart.js";
 import "./TimeseriesChart.scss";
 
 interface TimeSeriesChartProps {
@@ -48,8 +48,8 @@ export const getChartOptions = (
         color: "white",
         maxTicksLimit: 5,
       },
-      min: from,
-      max: to,
+      // min: from,
+      // max: to,
     },
   },
   plugins: {
@@ -78,30 +78,35 @@ export const TimeSeriesChart = ({
   color,
   backgroundColor,
 }: TimeSeriesChartProps) => {
-  const [chartData] = useState({
-    labels: [],
-    datasets: [
-      {
-        label: legend,
-        data: data
-          .sort((a, b) => a.timestamp - b.timestamp)
-          .map((d) => ({
-            x: d.timestamp,
-            y: d.value,
-          })),
-        fill: true,
-        borderColor: color,
-        backgroundColor: backgroundColor,
-        tension: 0.1,
-      },
-    ],
-  });
+  const [chartData, setChartData] = useState<ChartData<"line"> | null>(null);
+
+  useEffect(() => {
+    setChartData({
+      labels: [],
+      datasets: [
+        {
+          label: legend,
+          data: data
+            .sort((a, b) => a.timestamp - b.timestamp)
+            .map((d) => ({
+              x: d.timestamp,
+              y: d.value,
+            })),
+          fill: true,
+          borderColor: color,
+          backgroundColor: backgroundColor,
+          tension: 0.1,
+        },
+      ],
+    });
+  }, [data, from, to, legend, title, color, backgroundColor]);
 
   const timeSeriesChartOptions = getChartOptions(title, from, to);
+  console.log(color);
 
   return (
     <div className="timeseries-chart">
-      <Line data={chartData} options={timeSeriesChartOptions} />
+      {chartData && <Line data={chartData} options={timeSeriesChartOptions} />}
     </div>
   );
 };
