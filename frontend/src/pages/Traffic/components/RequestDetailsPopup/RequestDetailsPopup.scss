@@ -33,6 +33,10 @@
     flex-direction: row;
     gap: 1rem;
     margin-bottom: 1rem;
+
+    @media (max-width: $md) {
+      flex-direction: column;
+    }
   }
 
   &__tab {
