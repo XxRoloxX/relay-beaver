@@ -28,11 +28,37 @@
     margin-bottom: 1rem;
   }
 
+  &__tabs {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__tab {
+    padding: 0.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    border-color: transparent;
+    transition: 0.3s;
+    border-style: solid;
+    border-width: 1px;
+    font-size: 1rem;
+
+    &:hover {
+      border-color: $accent;
+    }
+
+    &--selected {
+      background-color: $accent;
+      color: white;
+    }
+  }
+
   &__content {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    // flex-grow: 1;
     gap: 2rem;
 
     @media (max-width: $md) {
@@ -42,7 +68,6 @@
   }
 
   &__infos {
-    // flex-grow: 1;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -59,9 +84,6 @@
     padding-right: 1rem;
     border-color: $tertiary;
 
-    // height: 100%;
-    // max-height: 300px;
-    //
     * {
       margin-top: 0.5rem;
       margin-bottom: 0.5rem;
@@ -81,7 +103,7 @@
   }
 
   &__body {
-    width: 90%;
+    width: 95%;
     flex-grow: 1;
     height: 300px;
     background-color: $quaternary;
