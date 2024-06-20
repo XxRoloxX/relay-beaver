@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ProxiedRequest } from "../../../../api/proxiedRequestApi";
 import Popup from "../../../../components/Popup/Popup";
 import { defaultDateFromUnixTimestamp } from "../../../../lib/date";
@@ -9,11 +10,88 @@ interface RequestDetailsPopupProps {
   setShowDetails: (arg: boolean) => void;
 }
 
+enum Tab {
+  ResponseBody = "Response body",
+  RequestBody = "Request body",
+  RequestHeaders = "Request headers",
+  ResponseHeaders = "Response headers",
+}
+
+const TABS = [
+  Tab.ResponseBody,
+  Tab.RequestBody,
+  Tab.RequestHeaders,
+  Tab.ResponseHeaders,
+];
+
+const ReponseBody = ({ response }: { response: ProxiedRequest }) => {
+  return (
+    <>
+      <textarea
+        className="request-details__body"
+        value={response.response.body}
+        readOnly
+      />
+    </>
+  );
+};
+
+const RequestBody = ({ request }: { request: ProxiedRequest }) => {
+  return (
+    <>
+      <textarea
+        className="request-details__body"
+        value={request.request.body}
+        readOnly
+      />
+    </>
+  );
+};
+
+const RequestHeaders = ({ request }: { request: ProxiedRequest }) => {
+  return (
+    <>
+      <textarea
+        className="request-details__body"
+        value={JSON.stringify(request.request.headers, null, 2)}
+        readOnly
+      />
+    </>
+  );
+};
+
+const ResponseHeaders = ({ response }: { response: ProxiedRequest }) => {
+  return (
+    <>
+      <textarea
+        className="request-details__body"
+        value={JSON.stringify(response.response.headers, null, 2)}
+        readOnly
+      />
+    </>
+  );
+};
+
+const mapTabToComponent = (tab: Tab, request: ProxiedRequest) => {
+  switch (tab) {
+    case Tab.ResponseBody:
+      return <ReponseBody response={request} />;
+    case Tab.RequestBody:
+      return <RequestBody request={request} />;
+    case Tab.RequestHeaders:
+      return <RequestHeaders request={request} />;
+    case Tab.ResponseHeaders:
+      return <ResponseHeaders response={request} />;
+  }
+};
+
 const RequestDetailsPopup = ({
   request,
   showDetails,
   setShowDetails,
 }: RequestDetailsPopupProps) => {
+  const [selectedTab, setSelectedTab] = useState(Tab.ResponseBody);
+
   return (
     request && (
       <Popup isDisplayed={showDetails} setIsDisplayed={setShowDetails}>
@@ -35,12 +113,21 @@ const RequestDetailsPopup = ({
               </div>
             </div>
             <div className="request-details__bodies">
-              <h3 className="request-details__subheader">Response body</h3>
-              <textarea
-                className="request-details__body"
-                value={request.response.body}
-                readOnly
-              />
+              <div className="request-details__tabs">
+                {TABS.map((tab) => (
+                  <h3
+                    key={tab}
+                    className={`request-details__tab ${selectedTab === tab
+                        ? "request-details__tab--selected"
+                        : ""
+                      }`}
+                    onClick={() => setSelectedTab(tab)}
+                  >
+                    {tab}
+                  </h3>
+                ))}
+              </div>
+              {mapTabToComponent(selectedTab, request)}
             </div>
           </div>
         </div>

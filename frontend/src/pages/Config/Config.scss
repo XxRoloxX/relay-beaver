@@ -6,7 +6,6 @@
   height: 100vh;
   grid-template-columns: 4fr 5fr;
   width: 100vw;
-  background-color: $tertiary;
 
   @media (max-width: $md) {
     grid-template-columns: 1fr;
