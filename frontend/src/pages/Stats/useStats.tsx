@@ -7,6 +7,7 @@ export interface HostStatsTimeSeries {
   averageLatency: TimeSeriesData[];
   badRequests: TimeSeriesData[];
   serverErrors: TimeSeriesData[];
+  goodRequests: TimeSeriesData[];
   [key: string]: TimeSeriesData[];
 }
 
@@ -20,6 +21,9 @@ export const countGoodRequests = (stats: HostStatsTimeSeries) =>
   stats.totalRequests.reduce((acc, entry) => acc + entry.value, 0) -
   countBadRequests(stats) -
   countServerErrors(stats);
+
+export const countTotalRequests = (stats: HostStatsTimeSeries) =>
+  stats.totalRequests.reduce((acc, entry) => acc + entry.value, 0);
 
 const useStats = () => {
   const [hosts, setHosts] = useState<string[]>([]);
@@ -76,6 +80,10 @@ export const mapHostDataToTimeSeries = (
       value: entry.value,
     })),
     serverErrors: data.serverErrors.map((entry) => ({
+      timestamp: entry.timestamp * 1000,
+      value: entry.value,
+    })),
+    goodRequests: data.goodRequests.map((entry) => ({
       timestamp: entry.timestamp * 1000,
       value: entry.value,
     })),

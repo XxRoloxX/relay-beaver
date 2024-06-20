@@ -11,6 +11,7 @@ export interface HostStats {
   averageLatency: StatsEntry[];
   badRequests: StatsEntry[];
   serverErrors: StatsEntry[];
+  goodRequests: StatsEntry[];
 }
 
 export const tryParseAsHostStats = (obj: unknown): HostStats => {

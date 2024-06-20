@@ -21,8 +21,8 @@ export interface TimeSeriesData {
 
 export const getChartOptions = (
   title: string,
-  from?: number,
-  to?: number,
+  // from?: number,
+  // to?: number,
 ): ChartOptions<"line"> => ({
   responsive: true,
   maintainAspectRatio: true,
@@ -101,8 +101,7 @@ export const TimeSeriesChart = ({
     });
   }, [data, from, to, legend, title, color, backgroundColor]);
 
-  const timeSeriesChartOptions = getChartOptions(title, from, to);
-  console.log(color);
+  const timeSeriesChartOptions = getChartOptions(title);
 
   return (
     <div className="timeseries-chart">

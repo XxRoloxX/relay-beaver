@@ -22,6 +22,7 @@ type HostStats struct {
 	AverageLatency []StatisticEntry `json:"averageLatency"`
 	BadRequests    []StatisticEntry `json:"badRequests"`
 	ServerErrors   []StatisticEntry `json:"serverErrors"`
+	GoodRequests   []StatisticEntry `json:"goodRequests"`
 }
 
 func (service StatsService) GetTimestampInterval(timestamp int, interval int) int {
@@ -68,15 +69,13 @@ func (service StatsService) ConvertMapAverageToStatsEntry(data map[int][]int) []
 func (service StatsService) GetHostStats(host string, from int, to int, interval int) HostStats {
 	requests, _ := service.Repo.FindAllByHost(host)
 
-	totalRequests,
-		averageLatency,
-		badRequests,
-		serverErrors := service.buildStatMaps(requests, from, to, interval)
+	statMaps := service.buildStatMaps(requests, from, to, interval)
 
-	totalRequestsEntries := service.ConvertMapCountToStatsEntry(totalRequests)
-	averageLatencyEntries := service.ConvertMapAverageToStatsEntry(averageLatency)
-	badRequestsEntries := service.ConvertMapCountToStatsEntry(badRequests)
-	serverErrorsEntries := service.ConvertMapCountToStatsEntry(serverErrors)
+	totalRequestsEntries := service.ConvertMapCountToStatsEntry(statMaps.TotalRequests)
+	averageLatencyEntries := service.ConvertMapAverageToStatsEntry(statMaps.AverageLatency)
+	badRequestsEntries := service.ConvertMapCountToStatsEntry(statMaps.BadRequests)
+	serverErrorsEntries := service.ConvertMapCountToStatsEntry(statMaps.ServerErrors)
+	goodRequestsEntries := service.ConvertMapCountToStatsEntry(statMaps.GoodRequests)
 
 	hostStats := HostStats{
 		Host:           host,
@@ -84,10 +83,12 @@ func (service StatsService) GetHostStats(host string, from int, to int, interval
 		AverageLatency: averageLatencyEntries,
 		BadRequests:    badRequestsEntries,
 		ServerErrors:   serverErrorsEntries,
+		GoodRequests:   goodRequestsEntries,
 	}
 
 	return hostStats
 }
+
 func (service StatsService) GetHosts() []string {
 	proxiedRequests, _ := service.Repo.FindAll()
 	hosts := make([]string, 0)
@@ -103,15 +104,24 @@ func (service StatsService) GetHosts() []string {
 
 /*
 GetStats returns statistics for all requests in the given time interval
-Returns a tuple of total requests, average latency, bad requests and server errors
+Returns a tuple of total requests, average latency, bad requests, server errors and good requests
 */
 
+type StatMaps struct {
+	TotalRequests  map[int]int
+	AverageLatency map[int][]int
+	GoodRequests   map[int]int
+	BadRequests    map[int]int
+	ServerErrors   map[int]int
+}
+
 // TODO: Refactor this to use a struct instead of returning a tuple
-func (service StatsService) buildStatMaps(requests []models.ProxiedRequest, from int, to int, interval int) (map[int]int, map[int][]int, map[int]int, map[int]int) {
+func (service StatsService) buildStatMaps(requests []models.ProxiedRequest, from int, to int, interval int) StatMaps {
 	var totalRequests map[int]int = make(map[int]int)
 	var averageLatency map[int][]int = make(map[int][]int)
 	var badRequests map[int]int = make(map[int]int)
 	var serverErrors map[int]int = make(map[int]int)
+	var goodRequests map[int]int = make(map[int]int)
 
 	for _, request := range requests {
 		if request.Timestamp() <= from || request.Timestamp() >= to {
@@ -133,6 +143,13 @@ func (service StatsService) buildStatMaps(requests []models.ProxiedRequest, from
 			serverErrors[timestamp]++
 		}
 
+		if request.Response.IsSuccessful() {
+			if _, ok := goodRequests[timestamp]; !ok {
+				goodRequests[timestamp] = 0
+			}
+			goodRequests[timestamp]++
+		}
+
 		if _, ok := totalRequests[timestamp]; !ok {
 			totalRequests[timestamp] = 0
 		}
@@ -144,5 +161,12 @@ func (service StatsService) buildStatMaps(requests []models.ProxiedRequest, from
 		averageLatency[timestamp] = append(averageLatency[timestamp], int(request.Latency()))
 	}
 
-	return totalRequests, averageLatency, badRequests, serverErrors
+	// return totalRequests, averageLatency, badRequests, serverErrors, goodRequests
+	return StatMaps{
+		TotalRequests:  totalRequests,
+		AverageLatency: averageLatency,
+		GoodRequests:   goodRequests,
+		BadRequests:    badRequests,
+		ServerErrors:   serverErrors,
+	}
 }
