@@ -4,6 +4,9 @@ import PolarChart, {
   PolarChartEntry,
 } from "../../components/PolarChart/PolarChart";
 import "./Stats.scss";
+import RadarChart, {
+  RadarChartEntry,
+} from "../../components/RadarChart/RadarChart";
 import useStats, {
   countBadRequests,
   countGoodRequests,
@@ -35,16 +38,41 @@ const STATS_CHARTS = [
     color: "rgba(0,0,255,0.6)",
     backgroundColor: "rgba(0,0,200)",
   },
+  // {
+  //   title: "Total Requests",
+  //   key: "totalRequests",
+  //   legend: "Total requests",
+  //   color: "rgba(75, 192, 192, 0.6)",
+  //   backgroundColor: "rgba(75, 192, 192, 0.6)",
+  // },
   {
-    title: "Total Requests",
-    key: "totalRequests",
-    legend: "Total requests",
-    color: "rgba(75, 192, 192, 0.6)",
-    backgroundColor: "rgba(75, 192, 192, 0.6)",
+    title: "Good Requests",
+    key: "goodRequests",
+    legend: "Number of good requests",
+    color: "rgba(0, 255, 0, 0.6)",
+    backgroundColor: "rgba(0, 200, 0, 0.6)",
   },
 ];
 
 const POLAR_CHART_STATS = [
+  {
+    label: "Bad Requests",
+    color: "rgba(255, 99, 132, 0.6)",
+    accumulatorFn: countBadRequests,
+  },
+  {
+    label: "Server Errors",
+    color: "rgba(255, 159, 64, 0.6)",
+    accumulatorFn: countServerErrors,
+  },
+  {
+    label: "Good requests",
+    color: "rgba(75, 192, 192, 0.6)",
+    accumulatorFn: countGoodRequests,
+  },
+];
+
+const RADAR_CHART_STATS = [
   {
     label: "Bad Requests",
     color: "rgba(255, 99, 132, 0.6)",
@@ -67,10 +95,21 @@ const Stats = () => {
   const getPolarChartData = useCallback(() => {
     const formatedData: PolarChartEntry[] = stats
       ? POLAR_CHART_STATS.map((stat) => ({
-          color: stat.color,
-          label: stat.label,
-          value: stat.accumulatorFn(stats),
-        }))
+        color: stat.color,
+        label: stat.label,
+        value: stat.accumulatorFn(stats),
+      }))
+      : [];
+    return formatedData;
+  }, [stats]);
+
+  const getRadarChartData = useCallback(() => {
+    const formatedData: RadarChartEntry[] = stats
+      ? RADAR_CHART_STATS.map((stat) => ({
+        color: stat.color,
+        label: stat.label,
+        value: stat.accumulatorFn(stats),
+      }))
       : [];
     return formatedData;
   }, [stats]);
@@ -106,9 +145,8 @@ const Stats = () => {
               backgroundColor={chart.backgroundColor}
             />
           ))}
-      </div>
-      <div className="stats__charts--big">
         <PolarChart data={getPolarChartData()} label={"Requests summary"} />
+        <RadarChart data={getRadarChartData()} label={"Requests summary"} />
       </div>
       {showHosts && <Shadow />}
     </div>

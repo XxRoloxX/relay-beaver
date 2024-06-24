@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProxiedRequest } from "../../../../api/proxiedRequestApi";
+import { Header, ProxiedRequest } from "../../../../api/proxiedRequestApi";
 import Popup from "../../../../components/Popup/Popup";
 import { defaultDateFromUnixTimestamp } from "../../../../lib/date";
 import "./RequestDetailsPopup.scss";
@@ -23,6 +23,10 @@ const TABS = [
   Tab.RequestHeaders,
   Tab.ResponseHeaders,
 ];
+
+const headersToString = (headers: Header[]) => {
+  return headers.map((header) => `${header.key}: ${header.value}`).join("\n");
+};
 
 const ReponseBody = ({ response }: { response: ProxiedRequest }) => {
   return (
@@ -53,7 +57,7 @@ const RequestHeaders = ({ request }: { request: ProxiedRequest }) => {
     <>
       <textarea
         className="request-details__body"
-        value={JSON.stringify(request.request.headers, null, 2)}
+        value={headersToString(request.request.headers)}
         readOnly
       />
     </>
@@ -65,7 +69,7 @@ const ResponseHeaders = ({ response }: { response: ProxiedRequest }) => {
     <>
       <textarea
         className="request-details__body"
-        value={JSON.stringify(response.response.headers, null, 2)}
+        value={headersToString(response.response.headers)}
         readOnly
       />
     </>

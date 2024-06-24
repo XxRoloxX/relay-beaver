@@ -8,7 +8,7 @@ interface Request {
   body: string;
 }
 
-interface Header {
+export interface Header {
   key: string;
   value: string;
 }

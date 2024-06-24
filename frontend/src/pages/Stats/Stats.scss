@@ -43,7 +43,8 @@
     margin: 2rem;
     width: 90%;
     max-width: 1600px;
-    max-height: 1000px;
+    // max-height: 1000px;
+    margin-bottom: 2rem;
 
     &--small {
       @extend .stats__charts;

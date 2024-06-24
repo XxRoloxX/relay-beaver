@@ -18,7 +18,7 @@ const useLogin = () => {
       login(code)
         .then((authenticationInfo) => {
           setAuthenticationInfo(authenticationInfo);
-          navigate("/traffic");
+          navigate("/config");
         })
         .catch((error) => {
           console.error("Failed to login", error);
@@ -26,7 +26,7 @@ const useLogin = () => {
     }
 
     if (isTokenValid()) {
-      navigate("/traffic");
+      navigate("/config");
     }
   }, [code, setAuthenticationInfo, navigate, isTokenValid]);
 

@@ -28,7 +28,7 @@ func (r Response) IsServerError() bool {
 }
 func (r Response) IsSuccessful() bool {
 
-	return r.StatusCode >= 200 && r.StatusCode < 300
+	return r.StatusCode >= 200 && r.StatusCode < 400
 }
 
 type ProxiedRequest struct {
