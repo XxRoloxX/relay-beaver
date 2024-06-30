@@ -1,0 +1,4 @@
+{
+    "_id": ObjectId(),
+    "email": "user@test.com"
+}

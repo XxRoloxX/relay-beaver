@@ -1,0 +1,20 @@
+{
+    "_id": ObjectId(),
+    "filter": [
+        {
+            "key": "x",
+            "value": "y"
+        },
+        {
+            "key": "a",
+            "value": "b"
+        },
+        {
+            "key": "c",
+            "value": "d"
+        }     
+    ],
+    "aggregationKey": {
+        "name": "Content-Type"
+    }
+}

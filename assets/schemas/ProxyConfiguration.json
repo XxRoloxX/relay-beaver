@@ -1,0 +1,57 @@
+[
+    {
+        "_id": ObjectId(),
+        "destination": "www.jenkins.com",
+        "targets": [
+            {
+                "host": "akamai.com",
+                "port": 80
+            },
+            {
+                "host": "google.com",
+                "port": 8080
+            },
+            {
+                "host": "amazon.com",
+                "port": 9090
+            }
+        ],
+        "loadBalancer": {
+            "algorithm": "ROUND_ROBIN"            
+        },
+        "requestModifications": {
+            "modifiedHeaders": [
+                {
+                    "Authorization" : "Bearer qwksqzqazqaqe123e12w3e12ws"
+                },
+                {
+                    "Age": "123"
+                }
+            ]
+        },
+        "externalHooks": ["AVERAGE_LATENCY", "CONTENT_LENGTH"]
+    },
+    {
+        "_id": ObjectId(),
+        "destination": "www.sentry.com",
+        "targets": [
+            {
+                "host": "akamai.com",
+                "port": 80
+            },
+            {
+                "host": "google.com",
+                "port": 8080
+            },
+            {
+                "host": "amazon.com",
+                "port": 9090
+            }
+        ],
+        "loadBalancer": {
+            "algorithm": "DYNAMIC",
+            "strategy": "RESOURCE_BASED",
+            "ratio": 0.33            
+        }
+    }
+]

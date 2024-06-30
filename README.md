@@ -76,3 +76,21 @@ Aby nie wymusząć tworzenia konta wykorzystywane jest komponent wykonyniujący 
 w tym przypadku jest to Google.
 
 ![Diagram UML](./assets/uml-diagram.png)
+
+## Architektura aplikacji
+Aplikacja powstanie w architekturze komunikujących się asynchronicznie przy pomocy protokołu HTTP mikroserwisów. Części backendowe będą się porozumiewiać między sobą oraz z częścią frontendową przy pomocy API.
+
+## Stos technologiczny
+Aplikacja dzieli się na frontend, backend, bazę danych oraz infrastrukturę.
+
+### Technologie frontendowe
+TypeScript wraz z biblioteką React
+
+### Technologie backendowe
+Golang wraz z bibliotekami pomocniczymi (Mux router, Mux websockets, GORM)
+
+### Baza danych
+Nierelacyjna baza danych MongoDB
+
+### Infrastruktura
+Docker, GitHub Actions
