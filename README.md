@@ -1,96 +1,49 @@
-# Relay Beaver (_Web-Managed Reverse Proxy_)
+# Relay Beaver
 
-## Opis tematu
+Relay Beaver is a web-managed reverse proxy designed to facilitate
+HTTP/HTTPS traffic debugging, analysis,
+and redirection through a web-based configuration panel.
 
-Celem projektu jest stworzenie narzędzia do proxowania/debugowania/analizowania ruchu HTTP/HTTPS
-w oparciu o konfigurację dostępną w panelu webowym.
+## Architecture
 
-Projekt ten składa się z czterech głównych komponentów:
+The project is structured into several key components:
 
-- **Proxy** - wydajny serwer HTTP/HTTPS, który przekierowuje ruch do serwerów docelowych
-- **Konfiguracja routingu** - panel webowy, który pozwala na dodawanie, usuwanie i modyfikowanie reguł proxy
-  (np. zmiana nagłówków HTTP, load-balancing, etc.)
-- **Logowanie/Debugowanie ruchu** - moduł który pozwala na przeglądanie ruchu przechodzącego
-  przez proxy w czasie rzeczywistym i powtarzanie wybranych żądań.
-- **Analityka** - moduł który agreguje informacje o ruchu i pozwala na ich analizę w ramach panelu webowego
+- Proxy: A high-performance HTTP/HTTPS server that forwards traffic to target servers.
+- Routing Configuration: A web panel that allows adding, removing, and modifying proxy rules (e.g., changing HTTP headers, load-balancing).
+- Traffic Logging/Debugging: A module for real-time traffic inspection and request replay.
+- Analytics: A module that aggregates traffic information for analysis through the web panel.
 
-## Przesłanka biznesowa
+## Features
 
-W przypadku skomplikowanych systemów do których ruch jest kierowany przez reverse proxy,
-często wygodną alternatywą zmiany pliku konfiguracyjnego (np. nginx.conf, albo terraform) jest
-wprowadzanie małych zmian (łatwych do cofnięcia) za pomocą panelu webowego. Takich
-zmian można dokonywać bez konieczności restartowania serwera proxy oraz bez konieczności
-logowania się na serwer, na którym proxy działa.
-Analityka ruchu pozwala na monitorowanie wydajności systemu, a także na wykrywanie
-serwisów, które są najbardziej obciążone.
+- Forward HTTP/HTTPS traffic to specified hosts.
+- Add and remove proxy rules.
+- Modify HTTP headers based on defined rules.
+- Perform application-layer load balancing across multiple servers.
+- Log traffic passing through the proxy.
+- Aggregate traffic information for analysis in the web panel.
+- Replay HTTP requests to specified hosts.
+- Authenticate using SSO (GitHub, Google, etc.).
 
-## Funkcjonalności
+## Backend Overview
 
-- Proxowanie ruchu HTTP/HTTPS do dowolnych hostów
-- Możliwość dodawania i usuwania reguł proxy
-- Możliwość modyfikowania nagłówków HTTP na podstawie określonych reguł
-- Możliwość load-balancingu na poziomie wartstwy aplikacji na wiele serwerów
-- Logowanie ruchu przechodzącego przez proxy
-- Agregowanie informacji o ruchu i udostępnianie ich do analizy w panelu webowym
-- Możliwość oddtwarzania żądań HTTP do określonych hostów
-- Uwierzytlenianie za pomocą SSO (Github, Google, etc.)
+The backend is implemented in Go and includes several modules for handling different aspects of the application:
 
-## Diagram UML
+- auth: Authentication middleware.
+- client_event: Handles client-specific events.
+- common: Common utilities and handlers.
+- database: Database initialization and interactions.
+- loadbalancer: Load balancing CRUD logic.
+- logger: Logging middleware.
+- proxy_event: Handles proxy events.
+- proxy_rule: Manages proxy rules.
+- stats: Aggregates and provides analytics.
 
-Projekt podzielić można na trzy pakiety: `proxy`, `metrics` oraz `authentication`.
+## Proxy Overview
 
-## Pakiet Proxy/Web
+The proxy is implemented as a separate binary using Go.
+It is responsible for handling HTTP/HTTPS traffic redirection.
 
-W tym pakiecie znajdują się komponenty odpowiedzialne za obsługę przychodzącego ruchu, który ma być
-przekazany do hosta docelowego.
-Głównym elementem tego pakietu jest zdefiniowanie `ProxyRuleEntry`, który zawiera informacje o akcjach jakie będą
-wykonane w ramach otrzymania konkretnego żądania HTTP.
+## Frontend Overview
 
-### ProxyRuleEntry
-
-Każdy wpis posiada następujące informacje:
-
-- sposób obsługi żadania (load-balancing). W tym przypadku może być to proste przekierowanie -> kiedy przekazujemy tylko jednego hosta docelowego,
-  lub bardziej zaawansowane algorytmu load-balancingu, które będą mogły przyjąć wiele hostów docelowych.
-- modyfikacje żądania HTTP. Możemy zmieniać nagłówki, dodawać nowe, usuwać stare, zmieniać ciało żądania, etc.
-- wykonanie dodatkowych czynności w ramach tzw. `hooków`. Możemy np. logować ruch, zapisywać go do bazy danych, wysyłać alerty itd.
-
-## Pakiet Metrics
-
-W ramach pakietu `Metrics` definiujemy komponenty odpowiedzialne za filtrowanie, agregowanie i wyliczanie
-metryk dotyczących przychądzącego ruchu.
-
-### Metrics
-
-- `Metrics` - interfejs, który definiuje metody do zbierania metryk (obliczanie średniej, sumy, zliczanie rekordów)
-
-### AggregationRule
-
-- `AggregationRule` - klasa, która definiuje regułę agregacji. Agregacja może się odbywać bezpośrednio na podstawie pola `SimpleAggregation` lub
-  na podstawie pola kalkulowanego `CalculatedAggregation`, to może być przydatne kiedy chcemy wykonać agregacje na przetworzonym polu (np. tylko na podstawie części adresu, na podstawie czasu obsługi żądanie, itp.)
-
-## Pakiet Authentication
-
-W ramach pakietu `Authentication` definiujemy komponenty odpowiedzialne za uwierzytelnianie użytkowników korzystających z panelu webowego.
-Aby nie wymusząć tworzenia konta wykorzystywane jest komponent wykonyniujący uwierzytlenianie i autoryzacje użytkownika na podstawie danych uzyskanych od zewnętrznego dostawcy SSO,
-w tym przypadku jest to Google.
-
-![Diagram UML](./assets/uml-diagram.png)
-
-## Architektura aplikacji
-Aplikacja powstanie w architekturze komunikujących się asynchronicznie przy pomocy protokołu HTTP mikroserwisów. Części backendowe będą się porozumiewiać między sobą oraz z częścią frontendową przy pomocy API.
-
-## Stos technologiczny
-Aplikacja dzieli się na frontend, backend, bazę danych oraz infrastrukturę.
-
-### Technologie frontendowe
-TypeScript wraz z biblioteką React
-
-### Technologie backendowe
-Golang wraz z bibliotekami pomocniczymi (Mux router, Mux websockets, GORM)
-
-### Baza danych
-Nierelacyjna baza danych MongoDB
-
-### Infrastruktura
-Docker, GitHub Actions
+The frontend is implemented using React/TypeScript and Vite for development and build processes.
+It includes configurations for ESLint to ensure code quality and consistency.
